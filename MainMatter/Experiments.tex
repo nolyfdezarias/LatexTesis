@@ -24,11 +24,11 @@ El resultado de todo el proceso fue un archivo de tipo “json” que almacena i
 
 
 
-\section{Experimento 1: Selección del número de clústeres para Kmeans}
+\section{Experimento 1: Selección del número de clústeres para Kmeans}\label{Experimento1}
 El número óptimo de clústeres para Kmeans es posiblemente el parámetro fundamental a la hora de aplicar el algoritmo. Es por esta razón, que se hizo necesario un estudio sobre los métodos empleados para estimar el número de clústeres. En este experimento se analizó los resultados para los métodos descritos en el capítulo anterior.
 
 \subsection{Gap en su versión estadística}
-Como se describe en el capítulo anterior, este método devuelve como posible k, el valor q maximiza las diferencias entre la compacidad de los datos originales con los datos agrupados con una distribución sin clústeres obvios. Para los datos analizados se obtiene k=29. Es decir, sugiere la formación de 29 clústeres. (ver Figura [\ref*{fig:Gap}])
+Como se describe en el capítulo anterior, este método devuelve como posible k, el valor q maximiza las diferencias entre la compacidad de los datos originales con los datos agrupados con una distribución sin clústeres obvios. Para los datos analizados se obtiene k=29. Es decir, sugiere la formación de 29 clústeres. (ver Figura [ \ref*{fig:Gap} ])
 
 
 \begin{figure}[h!]
@@ -39,7 +39,7 @@ Como se describe en el capítulo anterior, este método devuelve como posible k,
 \end{figure}
 
 \subsection{Método Elbow}
-Este método es un método apreciativo. Se encarga de estimar para qué valor la suma de las inercias del algoritmo K-Means comienza a disminuir. En este caso, el punto, donde la variación antes mencionada cambia rápidamente para una cantidad pequeña de grupos y luego se ralentiza este cambio, dando lugar a la formación de una especie de codo en la curva es para k = 6. (ver Figura [\ref*{fig:Elbow}])
+Este método es un método apreciativo. Se encarga de estimar para qué valor la suma de las inercias del algoritmo K-Means comienza a disminuir. En este caso, el punto, donde la variación antes mencionada cambia rápidamente para una cantidad pequeña de grupos y luego se ralentiza este cambio, dando lugar a la formación de una especie de codo en la curva es para k = 6. (ver Figura [ \ref*{fig:Elbow} ])
 
 \begin{figure}[h!]
 	\centering
@@ -49,7 +49,7 @@ Este método es un método apreciativo. Se encarga de estimar para qué valor la
 \end{figure}
 
 \subsection{El método del Coeficiente Silhouette}
-Partiendo de la metodología el coeficiente Silhoutte de una entidad es 1 si pertenece al clúster indicado. En otras palabras, a mayor valor global del coeficiente Silhoutte hace que la pertenencia de cada entidad al clúster determinado sea la mayor. En este caso particular se alcanza para k = 12. (ver Figura [\ref*{fig:SCoe1}])
+Partiendo de la metodología el coeficiente Silhoutte de una entidad es 1 si pertenece al clúster indicado. En otras palabras, a mayor valor global del coeficiente Silhoutte hace que la pertenencia de cada entidad al clúster determinado sea la mayor. En este caso particular se alcanza para k = 12. (ver Figura [ \ref*{fig:SCoe1} ])
 
 \begin{figure}[h!]
 	\centering
@@ -59,7 +59,7 @@ Partiendo de la metodología el coeficiente Silhoutte de una entidad es 1 si per
 \end{figure}
 
 \subsection{El método del Coeficiente Silhouette segunda variante}
-La idea con esta segunda variante del método es más apreciativa. En la figura [\ref{fig:SCoe2}] se observa una línea roja discontinua, que marca el valor de compacidad para cada caso, si para algún k (número de clústeres iniciales), algún clúster (las figuras de colores) no alcanza el valor de compacidad ese k no debe ser escogido. Esta primera regla no se cumple en ninguno de los casos, por lo que se prosiguió a la siguiente regla en la metodología: escoger el k para el cuál las formas de los clústeres tengan la distribución más uniforme posible, o sea, que sus figuras sean similares. Como se puede apreciar en la figura [\ref{fig:SCoe2}], los clústeres más uniformes se alcanzan para K = 3.
+La idea con esta segunda variante del método es más apreciativa. En la figura [ \ref{fig:SCoe2} ] se observa una línea roja discontinua, que marca el valor de compacidad para cada caso, si para algún k (número de clústeres iniciales), algún clúster (las figuras de colores) no alcanza el valor de compacidad ese k no debe ser escogido. Esta primera regla no se cumple en ninguno de los casos, por lo que se prosiguió a la siguiente regla en la metodología: escoger el k para el cuál las formas de los clústeres tengan la distribución más uniforme posible, o sea, que sus figuras sean similares. Como se puede apreciar en la figura [ \ref{fig:SCoe2} ], los clústeres más uniformes se alcanzan para K = 3.
 
 \begin{figure}[h!]
 	\centering
@@ -68,7 +68,7 @@ La idea con esta segunda variante del método es más apreciativa. En la figura 
 	\label{fig:SCoe2}
 \end{figure}
 \subsection{El método del índice Calinski-Harabasz}
-Este algoritmo establece que a mayor valor del índice de Calinski-Harabasz es una mejor estimación para el número inicial de clústeres, ya que la misma garantiza una mayor compacidad de los clústeres. En este caso se seleccionó k = 29, como se observa en la figura [\ref*{fig:CI}], para 29 clústeres se alcanza el mayor valor para el índice de Calinski-Harabasz.
+Este algoritmo establece que a mayor valor del índice de Calinski-Harabasz es una mejor estimación para el número inicial de clústeres, ya que la misma garantiza una mayor compacidad de los clústeres. En este caso se seleccionó k = 29, como se observa en la figura [ \ref*{fig:CI} ], para 29 clústeres se alcanza el mayor valor para el índice de Calinski-Harabasz.
 
 
 \begin{figure}[h!]
@@ -78,7 +78,7 @@ Este algoritmo establece que a mayor valor del índice de Calinski-Harabasz es u
 	\label{fig:CI}
 \end{figure}
 \subsection{El método del índice de Davies-Bouldin}
-Este método tiene un principio muy similar al índice Calinski-Harabasz y al coeficiente Silhouette, dado que captura tanto la compacidad como la separación de los clústeres. A diferencia de ambos métodos mencionados a menor valor del índice de Davies-Bouldin, la literatura establece que se alcanzan mejores resultados. En este trabajo se seleccionó k = 12, dado que como se observa en la figura [\ref{fig:DI}], para 12 clústeres se alcanza el menor valor para el índice de Davies-Bouldin.
+Este método tiene un principio muy similar al índice Calinski-Harabasz y al coeficiente Silhouette, dado que captura tanto la compacidad como la separación de los clústeres. A diferencia de ambos métodos mencionados a menor valor del índice de Davies-Bouldin, la literatura establece que se alcanzan mejores resultados. En este trabajo se seleccionó k = 12, dado que como se observa en la figura [ \ref{fig:DI} ], para 12 clústeres se alcanza el menor valor para el índice de Davies-Bouldin.
 
 \begin{figure}[h!]
 	\centering
@@ -87,7 +87,7 @@ Este método tiene un principio muy similar al índice Calinski-Harabasz y al co
 	\label{fig:DI}
 \end{figure}
 \subsection{El método Dendrograma}
-Dado que un dendrograma es una representación gráfica de datos en forma de árbol, dónde los datos se agrupan en subcategorías. En este método se toma el número de subcategorías como el número óptimo de clústeres, se obtuvo k = 3. Se puede apreciar en la figura [\ref*{fig:Dend}] donde cada categoría está marcada con un color solo aparecen tres colores, dictaminando que en el árbol de los datos analizados hay tres subcategorías presentes, o sea, que la mejor distribución de los datos sería en tres clústeres.
+Dado que un dendrograma es una representación gráfica de datos en forma de árbol, dónde los datos se agrupan en subcategorías. En este método se toma el número de subcategorías como el número óptimo de clústeres, se obtuvo k = 3. Se puede apreciar en la figura [ \ref*{fig:Dend} ] donde cada categoría está marcada con un color solo aparecen tres colores, dictaminando que en el árbol de los datos analizados hay tres subcategorías presentes, o sea, que la mejor distribución de los datos sería en tres clústeres.
 
 \begin{figure}[h!]
 	\centering
@@ -153,7 +153,7 @@ Dado que un dendrograma es una representación gráfica de datos en forma de ár
 	\label{fig:Kmeans}
 \end{figure}
 
-El análisis realizado se identificó K = 3 como el número de clústeres óptimo para el algoritmo de Kmeans, para el conjunto de datos estudiados. Por un lado, es el valor de la moda de todos los algoritmos estudiados para la estimación de dicho parámetro y por otro resultó ser el más descriptivo en cuanto a las diferencias de los clústeres. Esto se puede apreciar claramente en las imágenes asociadas a cada uno de los resultados de los métodos donde a mayor número de clústeres menor las diferencias entre el valor de su centroide, lo que impedía tomar decisiones certeras. La figura [\ref{fig:Conc}], muestra el resultado final de aplicar el algoritmo k means con k =3 y el valor de sus centroides.
+El análisis realizado se identificó K = 3 como el número de clústeres óptimo para el algoritmo de Kmeans, para el conjunto de datos estudiados. Por un lado, es el valor de la moda de todos los algoritmos estudiados para la estimación de dicho parámetro y por otro resultó ser el más descriptivo en cuanto a las diferencias de los clústeres. Esto se puede apreciar claramente en las imágenes asociadas a cada uno de los resultados de los métodos donde a mayor número de clústeres menor las diferencias entre el valor de su centroide, lo que impedía tomar decisiones certeras. La figura [ \ref{fig:Conc} ], muestra el resultado final de aplicar el algoritmo k means con k =3 y el valor de sus centroides.
 
 \begin{figure}[h!]
 	\centering
@@ -186,7 +186,7 @@ En muchas ocasiones un análisis desde lo local, es fundamental en el estudio de
 	
 \end{figure}
 
-Los clústeres obtenidos para el resto de los municipios pueden consultarse en el Anexo 1.
+Los clústeres obtenidos para el resto de los municipios pueden consultarse en el Anexo [ \ref{chapter:Anexo} ].
 
 \newpage
 Queda propuesto para trabajos posteriores realizar un análisis más profundo a nivel de localidad para los distintos municipios de la Habana. Estudio futuro que espera aportar nuevos y determinantes argumentos para establecer una comparación más a fondo entre lo local y lo global(municipio-ciudad).
@@ -210,11 +210,11 @@ Los resultados de ambas metodologías para los datos de la proporción de las vi
 
 \begin{figure}[h!]
 	\centering
-	\begin{subfigure}[b]{0.4\linewidth}
+	\begin{subfigure}[b]{0.49\linewidth}
 		\includegraphics[width=\linewidth, height=3cm]{Images/TrayecCon.png}
 		\caption{Trayectorias Modificadas}
 	\end{subfigure}
-	\begin{subfigure}[b]{0.4\linewidth}
+	\begin{subfigure}[b]{0.49\linewidth}
 		\includegraphics[width=\linewidth, height=3cm]{Images/ValueTray.png}
 		\caption{Trayectorias Simples}
 	\end{subfigure}
@@ -223,20 +223,20 @@ Los resultados de ambas metodologías para los datos de la proporción de las vi
 	\label{fig:trayectorias}
 \end{figure}
 
-La imagen [\ref{fig:trayectorias}] describen el conjunto de todas las trayectorias para ambas metodologías. Las fluctuaciones en las figuras determinan qué tan rápido convergen las trayectorias.
+La imagen [ \ref{fig:trayectorias} ] describen el conjunto de todas las trayectorias para ambas metodologías. Las fluctuaciones en las figuras determinan qué tan rápido convergen las trayectorias.
 
 \newpage
 
-Un análisis desde lo local puede resultar mucho más provechoso para analizar las diferencias entre ambos métodos de trayectorias. Las figura [\ref{fig:Onetrayectorias}] muestran el comportamiento de una única trayectoria, que parte desde el mismo distrito utilizando ambos métodos de trayectorias. En la figura [\ref{fig:OnetrayectoriasM}] se muestra una convergencia más lineal pues el recorrido en orden del valor de la variable. En la figura [\ref{fig:OnetrayectoriasS}] se muestra una convergencia menos lineal esto se debe a que el recorrido se realiza por cercanía lo que implica que varía grandemente el valor que toma la variable de estudio independientemente de la cercanía.
+Un análisis desde lo local puede resultar mucho más provechoso para analizar las diferencias entre ambos métodos de trayectorias. Las figura [ \ref{fig:Onetrayectorias} ] muestran el comportamiento de una única trayectoria, que parte desde el mismo distrito utilizando ambos métodos de trayectorias. En la figura [ \ref{fig:OnetrayectoriasM} ] se muestra una convergencia más lineal pues el recorrido en orden del valor de la variable. En la figura [ \ref{fig:OnetrayectoriasS} ] se muestra una convergencia menos lineal esto se debe a que el recorrido se realiza por cercanía lo que implica que varía grandemente el valor que toma la variable de estudio independientemente de la cercanía.
 
 \begin{figure}[h!]
 	\centering
-	\begin{subfigure}[b]{0.4\linewidth}
+	\begin{subfigure}[b]{0.49\linewidth}
 		\includegraphics[width=\linewidth, height=3cm]{Images/OneTrayecV.png}
 		\caption{Trayectorias Modificadas}
 		\label{fig:OnetrayectoriasM}
 	\end{subfigure}
-	\begin{subfigure}[b]{0.4\linewidth}
+	\begin{subfigure}[b]{0.49\linewidth}
 		\includegraphics[width=\linewidth, height=3cm]{Images/OneTrayecD.png}
 		\caption{Trayectorias Simples}
 		\label{fig:OnetrayectoriasS}
@@ -250,12 +250,12 @@ Un análisis desde lo local puede resultar mucho más provechoso para analizar l
 
 \begin{figure}[h!]
 	\centering
-	\begin{subfigure}[b]{0.4\linewidth}
+	\begin{subfigure}[b]{0.49\linewidth}
 		\includegraphics[width=\linewidth, height=3cm]{Images/TrayecVa.png}
 		\caption{Trayectorias Modificadas}
 		\label{fig:TrayecVa}
 	\end{subfigure}
-	\begin{subfigure}[b]{0.4\linewidth}
+	\begin{subfigure}[b]{0.49\linewidth}
 		\includegraphics[width=\linewidth, height=3cm]{Images/TrayecDis.png}
 		\caption{Trayectorias Simples}
 		\label{fig:TrayecDis}
@@ -265,7 +265,7 @@ Un análisis desde lo local puede resultar mucho más provechoso para analizar l
 	\label{fig:RecorridoTrayectorias}
 \end{figure}
 
-La figura \ref{fig:RecorridoTrayectorias}  muestran el recorrido en el mapa para ambas metodologías. El método de trayectorias simples muestra un recorrido claramente por distancia geográfica entre distritos [\ref{fig:TrayecDis}], mientras que el método de trayectorias modificadas [\ref{fig:TrayecVa}]hace un recorrido desde la periferia hasta el interior. Este comportamiento del recorrido del método de trayectorias modificadas, se debe en gran medida al distrito seleccionado. En este caso se seleccionó un distrito de la periferia, marcado con un punto rojo, se puede observar como la trayectoria primero recorre la periferia de la ciudad y luego se va adentrando en la misma. El orden del recorrido está dado por el grado de intensidad del color verde, mientras más oscuro más tarde se recorrió. Lo que ratifica que los municipios de la periferia tienen edificaciones más jóvenes.
+La figura [ \ref{fig:RecorridoTrayectorias} ]  muestran el recorrido en el mapa para ambas metodologías. El método de trayectorias simples muestra un recorrido claramente por distancia geográfica entre distritos [ \ref{fig:TrayecDis} ], mientras que el método de trayectorias modificadas [ \ref{fig:TrayecVa} ] hace un recorrido desde la periferia hasta el interior. Este comportamiento del recorrido del método de trayectorias modificadas, se debe en gran medida al distrito seleccionado. En este caso se seleccionó un distrito de la periferia, marcado con un punto rojo, se puede observar como la trayectoria primero recorre la periferia de la ciudad y luego se va adentrando en la misma. El orden del recorrido está dado por el grado de intensidad del color verde, mientras más oscuro más tarde se recorrió. Lo que ratifica que los municipios de la periferia tienen edificaciones más jóvenes.
 
 \section{Experimento 3: Comparación Kmeans – Trajectorias Simples Modificado}
 El objetivo principal de esta comparación es analizar la distribución realizada por ambos algoritmos a los distritos de la Habana. Para ello un punto inicial es lograr obtener a partir del método de trayectorias el número de clústeres óptimo(K) para Kmeans. El método propuesto para realizar dicha tarea, propone una estimación del K a partir del momento de entrada al intervalo de confianza de cada trayectoria.
@@ -283,12 +283,13 @@ El objetivo principal de esta comparación es analizar la distribución realizad
 		\label{fig:ConvergenciaTrayec}
 	\end{subfigure}
 	
-	\caption{Recorrido por el mapa}
+	\caption{Convergencia de Trayectorias}
 	\label{fig:TrayectoriasConV}
 \end{figure}
 
-Como se puede apreciar en la figura [\ref{fig:TrayectoriasConV}] el resultado del método propuesto fue k = 3. La entrada del método fueron los datos de la proporción de las viviendas de antes del 1959 con respecto al total de viviendas en la Habana. El resultado corrobora la elección realizada en el primer experimento.
-En este punto se hace necesaria la siguiente interrogante: ¿Si ambos métodos dividen la ciudad en tres clústeres, son acaso los mismos? 
+Como se puede apreciar en la figura [ \ref{fig:TrayectoriasConV} ] el resultado del método propuesto fue k = 3. La entrada del método fueron los datos de la proporción de las viviendas de antes del 1959 con respecto al total de viviendas en la Habana. El resultado corrobora la elección realizada en el primer experimento.
+
+En este punto se hace necesaria la siguiente interrogante: \textbf{¿Si ambos métodos dividen la ciudad en tres clústeres, son acaso los mismos?}
 
 \begin{figure}[h!]
 	\centering
@@ -297,7 +298,7 @@ En este punto se hace necesaria la siguiente interrogante: ¿Si ambos métodos d
 	\label{fig:Hab3KTrayec}
 \end{figure}
 
-La división de la Habana que realizó el algoritmo de trayectorias simples describe dos clústeres bien definidos y un punto aislado. La Imagen [\ref{fig:Hab3KTrayec}] muestra una clara separación entre las áreas, no obstante, el promedio de edad de los dos clústeres grandes no difiere tanto. Esto podría indicar que no existe segregación, sin embargo, ocurre todo lo contrario. Sucede que los distritos de la zona norte de la Habana, marcados con un color azul en la figura [\ref{fig:Hab3KTrayec}], son más antiguos por lo tanto son más semejantes a la Ciudad lo que implica que tienen una convergencia rápida. En cambio, los distritos de la parte sur de la ciudad, marcados con carmelita en la figura [\ref{fig:Hab3KTrayec}], son más jóvenes y por tanto demoran más en converger a la media de la ciudad. Kmeans describe una ciudad muy compacta con tres clústeres completamente entrelazados en la figura [\ref{fig:Conc}]. Un detalle importante a destacar en algoritmo de Kmeans es la clara diferencia de edad de los centroides de los clústeres que permite llegar a conclusiones más certeras en cuanto a la segregación.
+La división de la Habana que realizó el algoritmo de trayectorias simples describe dos clústeres bien definidos y un punto aislado. La Imagen [ \ref{fig:Hab3KTrayec} ] muestra una clara separación entre las áreas, no obstante, el promedio de edad de los dos clústeres grandes no difiere tanto. Esto podría indicar que no existe segregación, sin embargo, ocurre todo lo contrario. Sucede que los distritos de la zona norte de la Habana, marcados con un color azul en la figura [ \ref{fig:Hab3KTrayec} ], son más antiguos por lo tanto son más semejantes a la Ciudad lo que implica que tienen una convergencia rápida. En cambio, los distritos de la parte sur de la ciudad, marcados con carmelita en la figura [ \ref{fig:Hab3KTrayec} ], son más jóvenes y por tanto demoran más en converger a la media de la ciudad. Kmeans describe una ciudad muy compacta con tres clústeres completamente entrelazados en la figura [ \ref{fig:Conc} ]. Un detalle importante a destacar en algoritmo de Kmeans es la clara diferencia de edad de los centroides de los clústeres que permite llegar a conclusiones más certeras en cuanto a la segregación.
 
 \begin{table}[h!]
 	\begin{center}
