@@ -1,0 +1,60 @@
+\documentclass[11pt,oneside]{uhthesis}
+%\usepackage{subfigure}
+\usepackage[linesnumbered,lined,titlenumbered,ruled]{algorithm2e}
+\usepackage[flushleft]{threeparttable}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{mathpazo}
+\usepackage{float}
+\usepackage{braket}
+\usepackage{subcaption}
+\usepackage{graphicx}
+
+%\floatstyle{ruled}
+%\restylefloat{table}
+
+\renewcommand{\tablename}{Tabla}
+%\dontprintsemicolon
+
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+\newcommand{\diff}[1]{\ensuremath{\mathrm{d}#1}}
+
+\DeclareMathOperator*{\argmax}{\arg\! max}
+\DeclareMathOperator*{\argmin}{\arg\! min}
+
+\title{Algoritmo de clustering y trayectorias aplicados al análisis de la segregación poblacional} 
+\author{Manuel Santiago Férnandez Arias}
+\advisor{MsC. Dafne García de Armas}
+\degree{Licenciado en Ciencia de la Computación}
+\faculty{Facultad de Matemática y Computación}
+\date{}
+\logo{Graphics/uhlogo}
+\makenomenclature
+
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+%\newcommand{\diff}[1]{\ensuremath{\mathrm{d}#1}}
+
+\begin{document}
+
+%\frontmatter
+\maketitle
+
+%\include{FrontMatter/Dedication}
+\include{FrontMatter/Thanks}
+\include{FrontMatter/SupervisorOpinion}
+\include{FrontMatter/Abstract}
+\include{FrontMatter/Contents}
+
+\mainmatter
+	
+\include{MainMatter/Introduction}
+\include{MainMatter/EstadoArte}
+\include{MainMatter/Metodologia}
+\include{MainMatter/Experiments}
+\backmatter
+
+\include{BackMatter/Conclusions}
+\include{BackMatter/Bibliography}
+
+\end{document}

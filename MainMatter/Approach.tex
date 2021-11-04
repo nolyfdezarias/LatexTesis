@@ -1,0 +1,32 @@
+
+
+\chapter{Propuesta} 
+
+Se quiere obtener una forma de aplicar AL para construir un corpus de manera que se minimice el desbalance entre sus clases sin sacrificar el desempeño del modelo.
+
+AL de por sí representa una forma efectiva para lidiar con un desbalance de clases moderado, aún sin incluir alguna consideración en especial por la distribución de las clases. Sin embargo, en casos en que el desbalance entre las clases sea pronunciado pueden aparecer dificultades y es posible que se acabe teniendo preferencia por las clases más representadas.
+
+Incorporar de manera explícita a las estrategias de consulta un criterio que permita priorizar aquellas instancias cuyas clases estén menos presentes en el dataset construido hasta el momento.
+
+Se quiere encontrar un equilibrio entre obtener un corpus balanceado y que permita al modelo aprender.
+
+
+\section{Framework}
+
+Modelo $M$
+
+Estrategia de consulta $Q$
+
+Filtro según balance $F$
+
+ 
+
+\subsection{Estrategias de Consulta}
+\subsubsection{Uncertainty Dropout}
+\subsubsection{DBAL}
+\subsubsection{Core-set}
+
+\subsection{Filtro según balance}
+\subsubsection{KNN}
+
+\section{Modelo}

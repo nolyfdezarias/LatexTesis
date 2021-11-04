@@ -1,0 +1,124 @@
+
+
+\chapter{Metodologia} 
+
+En el capítulo anterior se ilustró la importancia que tiene un análisis profundo sobre la segregación residencial debido a las devastas consecuencias que la misma provoca. En esta investigación, siguiendo con la serie de trabajos del Grupo de Inteligencia Artificial de la Universidad de la Habana, se abordó el tema de la segregación residencial tomando como objeto de estudio la ciudad de la Habana. El tema del envejecimiento del casco urbanístico en la Habana merece ser centro de más debates académicos, dada que la antigüedad de la ciudad está cerca de convertirse en un problema para el desarrollo de la misma. El estudio servirá de base para la toma de decisiones de las organizaciones pertinentes, así como constituirá los pilares para futuras investigaciones sobre el tema. En la investigación se utilizó el algoritmo de agrupamiento K-Means y una variación del método de trayectorias simples para sectorizar y agrupar los distritos en grupos con edades similares en cuanto a las viviendas. El utilizar ambos métodos sirvió a modo de comparación y validación de resultados acerca de la segregación existente en la Habana según la variable de estudio: “la edad de los distritos”, se entiende por la edad de un distrito como el promedio de las edades de sus edificaciones.
+
+
+\section{Kmeans}
+
+Las técnicas de agrupación de datos son análisis de datos descriptivos que se pueden aplicar a conjuntos de datos con múltiples variables para descubrir la estructura presente en los mismos. El agrupamiento de datos es una forma de clasificación no supervisada, ya que los grupos se forman evaluando similitudes y disimilitudes de características intrínsecas entre diferentes casos. La agrupación de los casos se basa en aquellas similitudes existentes y no sobre un criterio externo. Además, estas técnicas pueden ser útiles para conjuntos de datos de cualquier dimensión \cite{Morissette2013TheKC}.
+
+K-means es un algoritmo de agrupamiento particional basado en la ubicación iterativa de los elementos en los clústeres en función de su cercanía con los centroides de los mismos \cite{MacQueen1967SomeMF}. El algoritmo es aplicado para separar en casos los elementos de un conjunto de datos en una partición del conjunto, grupos que no se sobreponen entre sí. El objetivo es producir grupos donde los elementos del mismo tengan un alto grado de similitud y a su vez que las similitudes entre dos grupos distintos sean pequeñas \cite{Hastie2001TheEO}.
+K-Means incluye modelos de conectividad como métodos de agrupamiento jerárquico \cite{Morissette2013TheKC}. Estas técnicas tienen la ventaja de que no necesitan conocer el número de clústeres iniciales, pero son computacionalmente costosas por el hecho de que se basan en una matriz de disimilitud.
+
+Otro objetivo fundamental de K-Means es la reducción de la complejidad de un conjunto de datos. En un artículo presentado en 1994, se disminuyó la complejidad de los datos utilizando letras para representar diferentes valores numéricos de las variables y se tomaban las letras como centro de los clústeres \cite{faber1994clustering}. Con el mismo corte teórico, disminuir la complexidad de los datos, K-Means es ampliamente utilizado como algoritmo iniciador para otros algoritmos computacionalmente costosos como son el caso de: Cuantificación vectorial(LVQ) y el algoritmo de mezclas gaussianas(GMM) \cite{Shannon2001AMT}.
+
+Matemáticamente hablando K-Means es una aproximación de un modelo de mezcla normal con una estimación de las mezclas por máxima verosimilitud. La mezcla considera la pertenencia de un elemento a un clúster como una probabilidad de cada caso, basado en los promedios y covarianzas \cite{Symons1981ClusteringCA}.
+Si la métrica escogida es las distancias euclidianas, el algoritmo K-Means se puede definir formalmente como un procedimiento que agrupa los elementos de una colección en diferentes clústeres de manera que se minimice la sumatoria del error cuadrático.
+\begin{equation}
+SSE = \sum_{j = 1}^{k} \sum_{x \in C_j} d(x,m_j)^2
+\end{equation}
+Con : 
+\begin{itemize}
+	
+	\item 	$C_j es el j-ésimo clúster$ 
+	
+	\item $	m_j es el centroide del clúster  C_j $
+	\item $	d(x, m_j) es la distancia entre el elemento x y el centroide m_j$
+	\item k representa el número de clústeres
+	
+\end{itemize}
+El algoritmo se describe con los siguientes pasos: 
+\begin{enumerate}
+	
+	\item 	Escoger el número inicial de clústeres
+	
+	\item Escoger métrica
+	\item Escoger de manera aleatoria k elementos de la colección, serán las semillas iniciales y actuarán como centroides en un primer momento, es decir, serán los centros de cada clúster 
+	\item Asignar cada elemento de la colección al clúster que posea el centroide más cercano a él 
+	\item Recomputar los centroides de cada clúster, utilizando los miembros de los mismos
+	\item En caso de que el criterio de convergencia no se haya alcanzado, o sea, que el error cuadrático sea mínimo, repetir los pasos 4 y 5.
+	
+\end{enumerate}
+Para aplicar K-Means al estudio de la segregación es necesario aterrizar ciertos conceptos. En esta investigación la ciudad estará dividida en distritos, que constituyen la unidad espacial base de este trabajo. Los próximos dos epígrafes describirán más a profundidad los procesos de inicialización del algoritmo: escoger el número de clústeres iniciales (paso 1 del algoritmo) y escoger la métrica (paso 2 del algoritmo). Una vez seleccionados el número de clústeres iniciales(K) y la métrica a utilizar se comienza con el algoritmo. Dado que los distritos son la unidad base en esta investigación en todo momento K valores estarán marcados como centroides de los clústeres. En un inicio estos K valores se seleccionan tomando los valores de la variable para K distritos aleatorios. Este proceso se realiza en el paso 3. En el paso 4 se recorre toda la ciudad y para cada distrito se le asigna el clúster más cercano. Entiéndase por clúster más cercano como el grupo de distritos de la ciudad centrados en el valor de la variable de estudio más próximo al valor que dicho distrito tiene para esa variable. Una vez realizada dicha asignación, en el paso 5 se re computan los centroides de cada grupo, promediando el valor de la variable de todos los distritos pertenecientes a un grupo determinado. Los pasos 4 y 5 se repetirán hasta que el error cuadrático sea mínimo. Lo que informalmente significa que cada distrito está asociado al clúster que minimiza la distancia entre ellos y maximiza la distancia con todos los demás clústeres. La distancia entre un distrito y un clúster se calcula aplicando la métrica seleccionada en el paso 2, utilizando como entrada a la métrica el valor de la variable para ese distrito y el centroide del clúster.
+\subsection{Selección del número de clúster de K-Means}
+Uno de los problemas a la hora de aplicar varios algoritmos de agrupamientos es que la obtención de buenos resultados muchas veces está ligada a la selección del número de clúster iniciales, K-Means no es la excepción. Aunque no existe un criterio objetivo para la selección de dicho número, que indiscutiblemente es un parámetro clave. En la literatura se registran diferentes métodos para seleccionarlo apropiadamente, entre ellos se destacan: GAP en su versión estadística (es un sistema algébrico computacional especialmente orientdo a la teoría de grupos), método Elbow, Coeficiente Silhouette, índice de Calinsky--Harabasz, índice Davies-Bouldin y Dendrograma. La implementación de estos métodos y un análisis detallado sobre los resultados emitidos por estos sirvió de base para una selección más acertada del parámetro referente al número de clústeres.
+\subsubsection{El método Gap en su versión estadística}
+El método Gap en su versión estadística fue desarrollado en la universidad de Stanford en el 2001 \cite{Tibshirani2000EstimatingTN}. La idea detrás del método es realmente sencilla, se centra en encontrar una manera para comparar que tan compactos son los clústeres con una distribución nula de los datos (una distribución sin clústeres obvios). Estima que el número óptimo de clústeres es el valor para el cual la compacidad de los clústeres en los datos originales se localiza lo más lejos posible en la curva de referencia.
+
+Matemáticamente hablando:
+\begin{equation}
+	Gap_n(k)= E_n^{*}\{\log W_k \} - \log W_k
+\end{equation}
+Donde $E_n^{*}$ respresenta el valor esperado para una distribución nula en una muestra de tamaño n y $W_k$ es la medida de compacidad del clúster(WCS), que está basada en la suma del error cuadrático$(D_k)$:
+
+\begin{equation}
+D_k = \sum_{x_i \in C_k}\sum_{x_j \in C_k} d(x_i - x_j) 
+\end{equation}
+donde $"d"$ representa la distancia euclideana entre un par de puntos del clúster dado.
+
+El WCS es el resultado de la suma de las inercias del algoritmo K-Means. Siendo la inercia la suma de las distancias al cuadrado de cada objeto del clúster a su centroide.
+\begin{equation}
+	Inercia = \sum_{i = 0}^{n} ||x_i - m_j||
+\end{equation}
+
+\subsubsection{El método Elbow }
+El método Elbow goza de gran popularidad a consecuencia de su simplicidad. Utiliza los valores de WSS obtenidos para diferentes números de clústeres(k) y selecciona el “k” para el cual el cambio en el WSS comienza a disminuir. La idea detrás del método es que la variación antes mencionada cambia rápidamente para una cantidad pequeña de grupos y luego se ralentiza este cambio, dando lugar a la formación de una especie de codo en la curva. El punto del codo representa el número inicial de clúster óptimos según esta aproximación \cite{Yuan2019ResearchOK}. 
+\subsubsection{El método del Coeficiente Silhouette  }
+El método del Coeficiente Silhouette ilustra una manera de elegir el número de clústeres a partir del promedio del coeficiente de Silhoutte para cada punto. El coeficiente de Silhoutte para cada punto establece si para un punto determinado este pertenece al clúster que se le asignó:
+\begin{itemize}
+	\item S(i) cercano a 0 significa que el punto i esta entre dos clústeres
+	\item S(i) cercano a -1, el punto “i” está mal asignado y es conveniente asignarlo a otro clúster
+	\item S(i) cercano a 1, el punto “i” corresponde al clúster correcto
+\end{itemize}
+S(i) se define como:
+\begin{equation}
+S(i) = \frac{b(i) - a(i)}{max \{a(i),b(i)\} }
+\end{equation}
+donde b(i) es el promedio de las distancias mínimas de un punto i hacia el resto de los puntos en cualquier otro clúster y a(i) representa el promedio de la distancia del punto i hacia todos los puntos del mismo clúster \cite{Kaoungku2018TheSW}.
+\subsubsection{El método del índice Calinski-Harabasz   }
+El método del índice Calinski-Harabasz se basa en la siguiente comprensión sobre los clústeres:
+\begin{enumerate}
+	\item Son muy compactos
+	\item Existe una buena distancia entre dos clústeres cualesquiera
+\end{enumerate}
+El índice se calcula dividiendo la varianza de la suma de los cuadrados de las distancias de cada objeto de la colección al centroide del clúster al que pertenece, entre la suma de los cuadrados de la distancia entre los centroide de los clústeres. Mientras mayor sea el índice mejor. La fórmula matemática que describe el proceso es:
+\begin{equation}
+	CH_k = \frac{BCSM}{k - 1} - \frac{n - k}{WCSM}
+\end{equation}
+donde k es el número de clústeres y n el número de elementos en los datos. La matriz de dispersión entre los clústeres(BCSM) calcula la separación entre los clústeres y la matriz de dispersión dentro del clúster(WCSM) calcula la compacidad de cada clúster \cite{Wang2019AnII}.
+
+\subsubsection{El método del índice de Davies-Bouldin }
+El método del índice de Davies-Bouldin al igual que índice de Calinski-Harabasz utiliza la separación y la unidad de los clústeres para su análisis. Se define como:
+\begin{equation}
+DB = \frac{1}{k} - \sum_{i = 1}^{k} max_{j \neq i}(\frac{\sigma_i + \sigma_j}{d(c_i,c_j)})
+\end{equation}
+donde  k  es el número de clústeres y $\sigma_i$ es la distancia promedio de todos los puntos del cluster “i” al centroide $(c_i)$ del mismo \cite{Petrovic2006ACB}.
+\subsubsection{El método Dendrograma }
+El método Dendrograma es una técnica asociada únicamente a los métodos de aglomeración jerárquica. Un método agrupamiento basado en aglomeración jerárquica en un inicio considera cada punto como un clúster separado y comienza a unir los puntos a los clústeres jerárquicamente basándose en las distancias entre ellos. 
+Para obtener el número óptimo de clústeres se utiliza un dendrograma que muestra la secuencia de mezclas y separaciones de cada clúster. Cuando se mezclan dos clústeres, el dendrograma los une y les asigna como valor resultante de la unión la distancia entre ambos clústeres.
+
+
+\subsection{Selección de la métrica}
+La selección de la métrica apropiada depende del problema en cuestión. De manera general la similitud entre los elementos de un conjunto de datos, en los algoritmos de agrupamiento se toma como una función de proximidad. De esta manera los elementos más cercanos entre sí, acorde a una o varias variables, en el espacio de entrada son considerados más similares. La métrica más común para computar la proximidad es la distancia euclidiana [13]: 
+\begin{equation}
+	dE = \sqrt{\sum_{i}^{k}(c_i -x_i)^2}
+\end{equation}
+Donde “c” es el centro del clúster, “x” el elemento que se está analizando en ese momento y k corresponde al número de dimensiones con que cuentan los datos. Otras métricas usadas en la literatura son: “Distancia euclidiana al cuadrado”, “Distancia manhattan”, “Máxima distancia entre los atributos de un vector” y “Distancia Mahalanobis”. 
+\subsection{Ventajas y desventajas de K-Means}
+K-means es realmente un algoritmo fácil de comprender e implementar. Su complejidad temporal es O(n*t*k), donde n es la cardinalidad del conjunto sobre el que se aplica, “k” el número de clústeres y t el número de operaciones, como “k” y “t” son pequeños, se considera un algoritmo lineal. Por otra parte, es necesario destacar que este algoritmo solo se puede aplicar si la media de los datos está definida. Es necesario especificar el número “k” referente a la cantidad de clúster. Por último, el algoritmo tiene malos resultados para los puntos aislados. A pesar de todas sus marcadas limitaciones y que no se puede tomar como un algoritmo de agrupamiento de carácter general, sigue siendo uno de los más utilizados en la literatura debido a su simplicidad \cite{Morissette2013TheKC}.
+
+\section{Trayectorias Simples}
+El empleo de trayectorias simples es una herramienta moderna y poderosa para investigar las estructuras espaciales en una determinada ciudad. Se tiene conocimiento de que eventualmente, todas las trayectorias locales convergerán hacia un mismo valor. Dependiendo de si la convergencia se logra muy rápidamente o muy lentamente, esto significaría que esas unidades espaciales de las que parten esas trayectorias difieren del comportamiento medio de la ciudad para esa variable, lo que implica un grado de aislamiento. En general, las trayectorias describen cuán rápido puede una estructura individual comportarse como toda la ciudad. El análisis profundo de la similitud de entre cada estructura individual con toda la ciudad permite determinar el comportamiento de las variables de la ciudad para determinar si existe o no segregación.
+
+Una trayectoria consiste en un camino de Hamilton partiendo de una unidad censal, camino que recorre toda la ciudad sin repetir ninguna unidad censal \cite{RandonFurling2018FromUS}. Se puede definir como la suma acumulativa que la variable de estudio tiene en cada estructura individual o unidad censal. El orden en que se recorren las unidades censales se hace atendiendo a los valores de distancia euclidiana entre cada uno de ellos \cite{Armas2020AnlisisDS}. Sin embargo, en esta investigación se realizó una pequeña modificación con respecto al orden de recorrido de las unidades censales. Se recorrieron con respecto a una ordenación de los mismos, a partir del valor de la variable de estudio en la unidad censal inicial.
+
+Matemáticamente hablando una trayectoria simple $t= \{ U_i,1 \leq i \leq N \} $ , donde $U_i$ = ( $coord_i; X_i$  ) , donde i = 1...N es el índice de la unidad censal, N es el número de bloques censales, $coord_i$ son las coordenadas del centroide de i y $X_i$ valor de la variable estadística presente en la unidad censal  i. 
+
+\subsection{Ventajas y desventajas de Trayectorias Simples}
+Trayectorias Simples es un algoritmo de fácil de comprender e implementar. Su complejidad temporal es $O(n^2)$, donde n es la cardinalidad del conjunto sobre el que se aplica. Por otra parte, es necesario destacar que este algoritmo solo se puede aplicar en conjuntos de datos cuantitativos. Por último, el algoritmo original presenta dos limitaciones fundamentales   su recorrido únicamente tiene en cuenta las distancias euclidianas entre los diferentes puntos de la ciudad y, para cada trayectoria, se analiza el comportamiento de una única variable. 
+\subsection{Modificaciones al método de Trayectorias simples}
+En la búsqueda de mejorar las limitaciones del método de Trayectorias simples en esta investigación se implementaron una serie de modificaciones. El hecho de que el orden de una trayectoria siempre fuera tomado por la distancia geográfica entre los distritos no permitía realizar un recorrido en ordenado de los distritos según el valor de la variable de estudio. Se implementó que la distancia entre las unidades censales de la ciudad se mida en cuanto al valor de la variable con lo que se esperan obtener mejores resultados. Para posibilitar recorridos que tengan en cuenta múltiples variables se sustituyo $X_i$ en el algoritmo de trayectorias simples por un vector con los valores de todas las variables estadísticas presentes en esa unidad censal.
+\subsection{Propuestas con el método de Trayectorias simples}
+En el método de trayectorias simples, existe lo que en la literatura se conoce como radio de convergencia [14], que no es más que un punto donde cada trayectoria entra a un intervalo de confianza (en este caso se utilizó $\pm$0.1) alrededor de la tasa promedio de las viviendas construidas antes del 1959 en la ciudad. Con esta definición de base se desarrolló un método para estimar el número de clústeres óptimo para utilizar el algoritmo Kmeans. El método consta de un funcionamiento sencillo: computar el radio de convergencia para cada trayectoria y posteriormente tomando estos datos como entradas utilizar el algoritmo Dendograma previamente descrito en este trabajo. Queda propuesto para trabajos futuros una mejor selección del intervalo de confianza.

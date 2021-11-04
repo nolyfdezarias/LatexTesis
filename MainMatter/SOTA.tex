@@ -1,0 +1,1117 @@
+%===================================================================================
+% Chapter: SOTA
+%===================================================================================
+
+\chapter{SOTA}
+\section{Extracción de Información}
+
+La Extracción de Información es una tarea de procesamiento del lenguaje natural que comprende la extracción automática de información contenida en documentos no estructurados o semi-estructurados. Tiene como principal objetivo organizar la información de forma que sea fácil de interpertar para una máquina o un programa. La abundancia de información presente en Internet y la necesidad de procesarla hace que la Extracción de Información sea una tarea extremadamente importante. 
+
+
+La información que se quiere extraer suele ser entidades nombradas y relaciones. Una entidad nombrada es una palabra o frase que identifica claramente un elemento de un conjunto de otros elementos que tienen similares atributos. Una relación va a asociar dos o más entidades.  
+
+[Mencionar algunas aplicaciones de IE?]
+
+%\textit{  They can extract meaningful
+%facts from this text, which can then be used for ap-
+%plications like search and QA} \cite{pawar2017survey}
+
+Este trabajo se centra en una subtarea de la Extracción de Información: la extracción de relaciones.
+
+\section{Extracción de Relaciones} 
+
+El término "extracción de relaciones" suele usarse en la literatura para hacer referencia a su ocurrencia tanto a nivel global como a nivel de mención. En la extracción de relaciones a nivel global se quiere producir una lista de pares de entidades para las cuales existe una cierta relación semántica dentro de un corpus de texto. Por otro lado, cuando se trata a nivel de mención se toma como entrada un par de entidades, así como la oración que las contiene, y se espera identificar si un determinado tipo de relación existe para dicho par de entidades en el contexto de la oración \cite{pawar2017survey}. 
+
+%\textit{In the supervised
+%domain, the relation extraction and classification
+%tasks specifically refers to the classification of an
+%entity pair to a set of known relations, using docu-
+%ments containing mentions of the entity pair. The RE task refers to predicting whether a given doc-
+%ument contains a relation or not for the pair, mod-
+%eled as a binary classification. Relation classifi-
+%cation refers to predicting which relation class out
+%of a given ontology does that document point to,
+%given that it does contain a relation (modeled as a
+%multi-class classification problem). The two tasks
+%can be combined by making a multi-class classifi-
+%cation problem with an extra NoRelation class.} \cite{kumar2017survey}
+
+%Es posible hacer una distinción entre extracción y clasificación de relaciones. La extracción de relaciones se refiere a predecir si un documento dado contiene una relación o no para un determinado par de sus entidades y se modela como un problema de clasificación binaria. La clasificación de relaciones hace referencia a elegir entre un conjunto dado de relaciones aquella que expresa un documento en el que se conoce que existe una relación. En este caso se modela como un problema de clasificación multiclase. Las dos tareas se puede combinar creando un problema de clasificación multiclase con una clase \textit{NoRelation} adicional.\cite{kumar2017survey}    
+
+%\textit{Supervised approaches focus on RE at the mention level. These approaches
+%require labelled data where each pair of entity mentions is labelled with one of
+%the pre-defined relation types. A special relation type NONE is used to label
+%those pairs where none of the pre-defined relation types hold. In general, RE is
+%formulated as a multi-class classification problem with each class corresponding
+%to a different relation type (including NONE)}.\cite{pawar2017survey}
+
+
+Este trabajo trata la extracción de relaciones a nivel de mención. Esta tarea suele modelarse como un problema de aprendizaje supervisado de clasificación multiclase donde cada clase corresponde a un tipo diferente de relación. Estos enfoques requieren datos anotados donde cada par de entidades está anotada con uno de los tipos de relación predefinidos. Generalmente un tipo de relación especial \textit{None} es usada para anotar los pares que no expresan ninguna de las relaciones perdefinidas \cite{pawar2017survey}. 
+
+\subsection{Enfoques de Solución}
+
+Los principales enfoques supervisados encontrados en la literatura se pueden dividir en tres grupos: basados en patrones, basados en estadística y basados en aprendizaje profundo. 
+
+Los enfoques basados en patrones fueron pioneros en este campo pero sus limitaciones dieron lugar a que la atención haya estado centrada mayormente en las otras técnicas. En estas, de manera general, la extracción de relaciones va a estar basasda en: construir una representación vectorial de la oración y las entidades señaladas que se reciben como entrada y extraer características relevantes del vector que representa a la oración, ls cuales van a ser procesadas por un clasificador para intentar identificar la relación que cumplen las entidades. En los enfoques basados en estadística el proceso gira alredeor del uso de algoritmos de aprendizaje de máquina estadístico como máquinas de vectores de soporte (SVM) y modelos de máxima entropía, mientras que los enfoques basados en aprendizaje profundo van a estar protagonizados por el uso de modelos neuronales.
+
+\subsubsection{Enfoques Basados en Patrones}
+
+%The pioneering methods use sentence analysis tools
+%to identify syntactic elements in text, then automatically construct pattern rules from these elements (Soderland et al., 1995; Kim and Moldovan,
+%1995; Huffman, 1995; Califf and Mooney, 1997).
+%In order to extract patterns with better coverage
+%and accuracy, later work involves larger corpora
+%(Carlson et al., 2010), more formats of patterns
+%(Nakashole et al., 2012; Jiang et al., 2017), and
+%more efficient ways of extraction (Zheng et al.,
+%2019). As automatically constructed patterns may
+%have mistakes, most of the above methods require
+%further examinations from human experts, which is
+%the main limitation of pattern-based models. \cite{han2020more}
+
+Los métodos basados en patrones fueron las primeras técnicas empleadas para la extracción de relaciones. Estos utilizaban herramientas de análisis de oraciones
+para identificar elementos sintácticos en el texto, luego construían automáticamente patrones a partir de estos elementos \cite{soderland1995crystal, kim1995acquisition,huffman1995learning, califf1997relational}. Para extraer patrones más abarcadores y con mayor precisión, los trabajos posteriores implican grandes corpus \cite{carlson2010toward}, más formatos de patrones \cite{nakashole2012patty, jiang2017metapad}, y
+formas más eficientes de extracción \cite{zheng2019diagnre}. Como los patrones construidos automáticamente pueden contener errores la mayoría de los métodos anteriores requieren
+ser examinados por expertos humanos, lo cual constituye su principal limitación \cite{han2020more}.
+
+
+
+\subsubsection{Enfoques Basados en Estadística}
+
+Los métodos con un enfoque estadístico proporcionan un mejor desempeño y requieren menos esfuerzo humano, comparados con el uso de patrones, por lo que han sido ampliamente estudiados.
+
+Un enfoque común es basarse en el uso de rasgos para la representación de la entrada. El contexto de las dos entidades es transformado en un vector lineal formado por características tanto semánticas como léxicas y sintácticas. El resultado es presentado a  algoritmos de aprendizaje de máquina estadístico como máquinas de vectores de soporte  y modelos de máxima entropía  para el entrenamiento y la clasificación. Una vez que se diseña un conjunto de rasgos, estos métodos pudieran usar prácticamente cualquiera de los clasificadores usados en aprendizaje de máquina. Por tanto, los esfuerzos en este enfoque se centran en encontrar el conjunto de rasgos "adecuados". Descubrir ese conjunto requiere un análisis cuidadoso de las contribución de cada uno de los rasgos posibles y un conocimiento profundo los fenómenos lingüísticos subyacentes .
+
+Una de las principales deficiencias de los métodos centrados en la ingeniería de rasgos es que la mayoría de dichos rasgos se basan en representaciones simbólicas (caracteres, palabras, frases, etc), las cuales ocasionan problemas de polisemia y ambig\"uedad \cite{liu2020survey}.
+
+%Feature-based approaches transform the context of two
+%entities into a liner vector of carefully selected linguistic
+%features, varying from entity semantic information to lexical
+%and syntactic features of the context. Conversely, kernel-based
+%approaches explore structured representation in form of parse
+%trees such as dependency parse trees \cite{bunescu2005subsequence}. \cite{song2018survey}
+
+%Once the features are designed, feature-based methods can simply use any
+%classifier from the Machine Learning literature. Most of the efforts in these
+%methods are spent in designing the “right” set of features. Arriving at such a
+%features set requires careful analysis of contribution of each feature and knowledge of underlying linguistic phenomena \cite{pawar2017survey}.
+
+%\textit{
+%Classical approaches mainly focused on feature engineering
+%which aims to extract effective features for indicating target
+%relations. However, their main deficiency is the problem of
+%“semantic gaps”. It means that all features are based on sym-
+%bolic representation (characters, words, phrases, etc.) which
+%have polysemy and ambiguity problems.} \cite{liu2020survey}
+
+El amplio uso de SVM propició que se explorara con mayor profundidad los métodos basados en \textit{kernels} \cite{vapnik1998statistical}. Estos métodos evitan tener que realizar el proceso de ingeniería de rasgos de forma explícita. Se apoyan en una función de \textit{kernel}, que no es más que una función de similaridad que satisface ciertas propiedades. Dicha función va a estar diseñada para computar la similaridad entre las dos instancias de relación y la clasificación se llevará a cabo mediante SVM haciendo uso de esa información. 
+
+Varios sistemas de extracción basados en \textit{kernels} proponen diferentes formas de representar las instancias de relación de modo que las funciones de \textit{kernels} van a estar definidas sobre estructuras como: árboles de \textit{parsing} sintáctico \cite{zelenko2002kernel, zhou2007tree}, árboles de dependencias \cite{culotta2004dependency,bunescu2005shortest} y subsecuencias del texto \cite{zhao2005kernel,bunescu2005subsequence}, por citar algunas. La mayoría de estas técnicas miden la similaridad de dos representaciones en términos del número de subrepresentaciones que comparten \cite{pawar2017survey}.  
+
+
+
+%Due to the wide use of support vector machines
+%(SVM), kernel-based methods have been widely
+%explored, which design kernel functions for SVM
+%to measure the similarities between relation rep-
+%resentations and textual instances \cite{ , zhang2006composite, zhang2006exploring, wang2008reexamination}. \cite{han2020more}
+
+
+
+\subsubsection{Enfoques Basados en Aprendizaje Profundo}
+
+%\textit{Traditional non deep learning methods for relation extraction typically work in the supervised
+%paradigm. They can be divided into two classes
+%which are feature based methods and kernel based
+%methods. In both these methods, the extracted
+%features and elaborately-designed kernels use preexisting NLP systems which result in errors of the
+%various modules accumulating downstream. Also,
+%the manually constructed features may not capture
+%all the relevant information that is required. This
+%need to manual engineer features is removed by
+%moving into the domain of deep learning.} \cite{pawar2017survey}
+
+
+%Neural network based methods have been viewed as one of
+%the major driving force in the recent development of natural
+%language processing (NLP) \cite{lu2016recent,socher2012deep} \cite{song2018survey}
+
+Los métodos basados en redes neuronales se han considerado una
+de las principales fuerzas impulsoras en el desarrollo reciente de
+procesamiento de lenguaje natural \cite{lu2016recent,socher2012deep}. En el contexto de la extracción de relaciones los métodos tradicionales se concentran  en aprendizaje de máquinas estadístico basados en la extracción de rasgos o el diseño de \textit{kernels}. En ambas variantes se depende en gran medida del uso de sistemas preexistentes de NLP como \textit{parsing} sintáctico, \textit{parsing} de dependencias, extracción de entidades y etiquetado en partes de la oración, cuyos errores se propagan hacia el sistema de extracción de relaciones. Además, los rasgos construidos manualmente pueden pasar por alto información relevante. Los modelos basados en aprendizaje profundo pueden aprender automáticamente representaciones de rasgos derivadas del texto gracias a funciones de activación no lineales. Como resultado se evita la acumulación y propagación del  error asociada al proceso de ingeniería de rasgos y se elimina la necesidad de realizarlo manualmente \cite{liu2020survey}.   
+
+
+%\textit{ Compared with SRE models,
+%NRE methods can effectively capture textual infor-
+%mation and generalize to wider range of data.} \cite{han2020more}
+
+%\textit{Deep learning based models could
+%automatically learn feature representations from the input-
+%ing raw data via non-linear activation function in an end2end
+%manner, even including complex and intricate features. As a
+%result, traditional error accumulation and propagation prob-
+%lems in the feature engineering process could be avoided. \cite{liu2020survey}}
+
+
+
+%\textit{Recent research studies focus on extracting relational features with neural networks instead of manual work [maybe cite some recent works here]} \cite{mehmet2020neural} 
+
+%\textit{The relational extraction framework based on deep learning mainly includes three parts: input preprocessing, data representation and network model learning.The data preprocessing part takes the whole sentence or the specific range of information in the sentence as the input of the neural network, and uses the natural language processing tool to represent the characteristics of the data.In the data representation part, the input data in the previous step is represented by a low-dimensional vector.In the network model learning part, the network model is
+%designed according to the previous input feature information, and the expression of sentences or sentence packages is obtained. Then, the model is learned through training data.} \cite{zhang2020survey}
+
+%Los sistemas de extracción de relaciones basados en aprendizaje profundo incluyen principalmente 3 partes: preprocesamiento de la información, representación de la información y el modelo neuronal. El preprocesamiento de la información recibe como entrada de la red neuronal a la oración o partes específicas de esta, y usa herramientas de NLP para representar sus características. En la representación de la información el resultado del paso anterior es expresado como un vector. Por último, el modelo neuronal es diseñado de acuerdo a la información que se recibe como entrada. \cite{zhang2020survey}
+
+En la extracción de relaciones basada en aprendizaje profundo una vez se construye la representación vectorial de la oración y las entidades señaladas que se reciben como entrada, se va a hacer uso de un modelo neuronal para extraer características del vector que representa a la oración. Comúnemente un Perceptrón Multicapa (MLP) con función de activación \textit{softmax} sirve de clasificador para procesar el vector de características de la oración e identificar la relación que con mayor probabilidad cumplen las entidades.
+
+
+%Different from SRE models, NRE mainly uti-
+%lizes word embeddings and position embeddings
+%instead of hand-craft features as inputs. Word
+%embeddings (Turian et al., 2010; Mikolov et al.,
+%2013b) are the most used input representations
+%in NLP, which encode the semantic meaning of
+%words into vectors. In order to capture the entity
+%information in text, position embeddings (Zeng
+%et al., 2014) are introduced to specify the relative
+%distances between words and entities.
+
+%Except for word embeddings and position embeddings, there
+%are also other works integrating syntactic infor-
+%mation into NRE models. Xu et al. (2015a) and
+%Xu et al. (2015b) adopt CNNs and RNNs over
+%shortest dependency paths respectively. Liu et al.
+%(2015) propose a recursive neural network based
+%on augmented dependency paths. Xu et al. (2016)
+%and Cai et al. (2016) utilize deep RNNs to make
+%further use of dependency paths. 
+
+En la representación de la entrada es común el uso  de \textit{embeddings} de palabras \cite{turian2010word, mikolov2013distributed} que proporcionan la representación distribuida de una palabra en un vector denso de valores reales de dimensión  \textit{d}, donde \textit{d} es un número relativamente pequeño.  Se ha comprobado que las representaciones distribuidas son capaces de capturar propiedades semánticas y sintácticas de las palabras y sus contextos, a la vez que condensan esta información en formatos más compactos\cite{nguyen2015relation, santos2015classifying, zhang2015classificationRNN, zhou2016attention}. Para capturar información acerca de las entidades señaladas en la oración se usa lo que se denomina \textit{embeddings} de posición \cite{zeng2014relation}. Estos permiten codificar la posición relativa de cada palabra en la oración con respecto a las entidades de interés. De esta forma se transmite al modelo cuál es la posición de las entidades y aquellas palabras que son más cercanas a ellas.
+
+
+Además algunos trabajos han explorado el uso de otras características como el árbol de dependencias de la oración con la intención revelar dependencias entre palabras que se encuentran alejadas \cite{xu2015classifyingLSTMandSDP, xu2015semantic}.  También se considera útil la información que proviene de hiperónimos de \textit{WordNet}, reconocimiento de entidades nombradas y etiquetas de parte de la oración \cite{zhang2015bidirectional, xu2015classifyingLSTMandSDP}.
+
+
+%An LSTM model proposed by Xu et al. \cite{xu2015classifyingLSTMandSDP} takes advantage of the shortest dependency path (SDP)
+%between entities. They claim that the words along SDP are more informative. Dependency trees are directed
+%graphs, therefore, there is the need of differentiating whether the first entity is related to the second entity
+%or the relation implies the reverse direction. For this purpose, the SPD is divided into two sub-path, each is
+%directed from the entity towards the ancestor node. \cite{mehmet2020neural}
+%
+%Xu et al. \cite{xu2015classifyingLSTMandSDP} also applied a LSTM on the syn-
+%tactic tree of the given sentence to perform feature represen-
+%tation. Their model leveraged the shortest dependency path
+%between two entities. Then, four
+%channels of information (words, part-of-speech tags, gram-
+%matical relations and WordNet hypernyms) along the shortest
+%dependency path will be modeled by a distinct LSTM. Af-
+%ter that, a max-pooling layer is applied after the LSTM. The
+%pooling results of each channel will be concatenated. Simi-
+%larly, a softmax classifier will be used to obtain the classify
+%results. \cite{liu2020survey}
+
+%Studies in NRE mainly focus on designing and
+%utilizing various network architectures to capture
+%the relational semantics within text, such as 
+%
+%convolutional neural networks (CNNs) (Liu et al., 2013; Zeng et al., 2015; Huang and Wang,
+%2017) that effectively model local textual patterns,
+
+%recursive neural networks ( Miwa
+%and Bansal, 2016) that learn compositional repre-
+%sentations for sentences recursively, 
+%
+%recurrent neural networks (RNNs) (Nguyen and Grishman, 2015a; Vu
+%et al., 2016; Zhang et al., 2015) that can better
+%handle long sequential data,
+
+%graph neural networks (GNNs) (Zhang et al., 2018; Zhu et al.,
+%2019a) that build word/entity graphs for reason-
+%ing,
+% and attention-based neural networks (Zhou
+%et al., 2016; Wang et al., 2016; Xiao and Liu, 2016)
+%that utilize attention mechanism to aggregate global
+%relational information.
+
+
+Los estudios basados en aprendizaje profundo se centran principalmente en diseñar y utilizar varios tipos de arquitecturas de redes neuronales con el objetivo de capturar las relaciones semánticas expresadas en el texto. En la literatura predomina el uso de Redes Neuronales Convolucionales (CNN) \cite{zeng2014relation, santos2015classifying, nguyen2015relation} y Redes Neuronales Recursivas/Recurrentes \cite{zhang2015classificationRNN, zhang2015bidirectional, xu2015classifyingLSTMandSDP}.
+
+
+Los modelos basados en CNN son capaces de modelar patrones locales en el texto. En su trabajo, Zeng et al. \cite{zeng2014relation} proponen una CNN capaz de combinar características locales y así obtener una representación global de la oración y las entidades en cuestión. Una de las contribuciones importantes de este trabajo es la obtención de la representación final mediante una operación de \textit{max-pooling} sobre el conjunto de vectores resultante de cada una de las ventanas de convolución. La clasificación se obtiene mediante un MLP con activación \textit{softmax}, sobre el conjunto de relaciones más la clase artificial \textit{None}. Tomando como base el modelo anterior  Nguyen y Grishman \cite{nguyen2015relation}  exploran el uso de varias convoluciones con distintos tamaños de ventana. Sin embargo, el uso de CNNs limita la habilidad del modelo para manejar relaciones entre entidades muy separadas en la oración debido a que la información que se transmite en la red neuronal es generalmente local \cite{zhang2020survey}.
+
+
+%Cai et al. \cite{cai2016bidirectional}
+%proposes a relation classification model combining cyclic neural network and convolutional neural
+%network on the shortest dependent path, and introduces the bidirectional cyclic convolutional neural
+%network to learn the information on the shortest dependent path from both positive and negative
+%directions. \cite{zhang2020survey}
+
+Los modelos que se apoyan en RNN muestran mejor desempeño en manejar secuencias largas y captar dependencias entre entidades que se encuentran alejadas en la oración \cite{zhang2015classificationRNN}. Xu et al.\cite{xu2015classifyingLSTMandSDP} fueron los primeros en proponer el uso de \textit{Long-Short Term Memory} (LSTM) para la tarea de extracción de relaciones. Sin embargo, las redes LSTM aprenden representaciones semánticas de las secuencias solo en una dirección, lo que puede ocasionar que sean incapaces de extraer por completo información acerca del contexto en la oración. Para solucionar esas limitaciones Zhang et al. \cite{zhang2015bidirectional} proponen aplicar una red LSTM bidireccional (BiLSTM) que para cada palabra de la oración va a obtener información acerca de las palabras que se encuentran antés y después.   
+
+
+
+% En 2015, Zhang et al. propusieron el uso de una red BiLSTM sobre la secuencia de tokens para codificar cada palabra de la oración. Obtienen una representación de las entidades señaladas mediante la concatenación de distintos rasgos léxicos y la salida
+%correspondiente de la red BiLSTM. Finalmente, combinan los rasgos obte-
+%nidos de la oración y las entidades mediante un MLP, cuya salida pasa por
+%un clasificador softmax para predecir la relación resultante.
+
+
+%Standard LSTM learns the semantic represen-
+%tations of the given sequence only in a single direction (for-
+%ward or backward), which may have the input data flexibility
+%problem. Thus, similar to other NLP tasks, bidirectional long
+%short-term memory networks (BLSTM), that performs for-
+%ward LSTM and backward LSTM simultaneously, are widely
+%used for relation extraction.\cite{liu2020survey}
+
+%To solve the problem that one-way LSTM network cannot fully extract context
+%information, Zhang et al. \cite{zhang2015bidirectional} proposed BiLSTM model to extract the bidirectional implicit state output of
+%sentences. \cite{zhang2020survey}
+%
+%Zhang et al. \cite{zhang2015bidirectional} employed a
+%BLSTM to extract sentence level features for relation extrac-
+%tion. They concatenated the outputs of a forward LSTM and
+%a backward LSTM together at each time to form new hidden
+%vectors. Hidden vectors at all times are combined (average,
+%adding, etc.) as the final feature representation, which are
+%then fed into a softmax classifier to predict the semantic rela-
+%tion labels. \cite{liu2020survey}
+
+
+Algunos trabajos además han experimentado con el uso de mecanismos de atención. Shen et al. \cite{huang2016attention} proponen un modelo BiLSTM basado en atención capaz de centrarse en aquellas palabras que contribuyen en mayor medida a la representación semántica de la relación. Wang et al. \cite{wang2016multilevel} incorpora el uso de dos niveles de atención a una CNN. Un nivel primario sobre la oración con respecto a las dos entidades en cuestión y un nivel secundario de atención para determinar la características resultantes de la convolución más relevantes para la clasificación de la relación.     
+
+%Wang et al. \cite{wang2016multilevel} incorporated an attention mechanism into
+%CNN at two levels for relation extraction. They employed the
+%attention to determine which parts of the sentence are most
+%influential with respect to the two entities of interest. \cite{liu2020survey} 
+
+%Attention mechanism is well-known because of its capability
+%of learning the “importance” distribution over the inputs and
+%has been proven to be successful in a wide range, such as ma-
+%chine translation and question answering. Similarly, for rela-
+%tion extraction, Shen et al. \cite{huang2016attention} and Zhou et al.\cite{zhou2016attention}  applied
+%attention mechanism to learn crucial information. In specific,
+%Shen et al. \cite{huang2016attention} believed that not all words in a sentence con-
+%tributed equally to the representation of the semantic relation.\cite{liu2020survey}
+
+%Zhou et al. \cite{zhou2016attention} also proposed an attention based BLSTM
+%for relation extraction. After extracting sentence level fea-
+%tures through a BLSTM, the model leveraged the attention
+%mechanism to learn important semantical information. \cite{liu2020survey}
+
+%On the basis of Zhang \cite{zhang2015classificationRNN}, Zhou et al. \cite{zhou2016attention}  proposed Att-BiLSTM model in combination with
+%attention mechanism.  \cite{zhang2020survey}
+
+%Meaningful information can be located anywhere in the sentence. Instead of using features from lexical
+%sources such as dependency parsers and named entity recognizers, Zhou et al. \cite{zhou2016attention} incorporate attention
+%mechanism to BLSTM network to capture more informative parts of the sentence. \cite{mehmet2020neural}
+%
+%Wang et al. \cite{wang2016multilevel} designed the input attention layer and
+%the relational attention layer, and proposed the BiAtt-pooling-CNN model. \cite{zhang2020survey}
+%
+%
+%
+%Zhao et al. \cite{zhao2019improving} achieved
+%the best result on SemEval-2010 task 8. They extract graph topological features on top of BERT embeddings.\cite{mehmet2020neural} 
+
+
+
+%Recently, Transformer, proposed by Vaswani et al. \cite{vaswani2017attention}, dispensed with recurrence and convolutions entirely. Transformer utilized
+%stacked self-attention and point-wise, fully connected layers
+%to build basic blocks. \cite{liu2020survey} 
+%
+%Based on transformer, Radford et al.\cite{radford2019languageMA} proposed generative pre-trained transformer (GPT) for
+%language understanding. Unlike GPT (a left-to-right archi-
+%tecture), Bidirectional Encoder Representations from Trans-
+%formers (BERT) \cite{devlin2019bert} was recently proposed to pre-train deep
+%bidirectional Transformer by jointly conditioning on both left
+%and right context in all layers. BERT has been proven to be
+%the state-of-the-art for several NLP tasks. \cite{liu2020survey} 
+%
+%Commonly preferred pre-trained language model in relation extraction studies, BERT, is an unsupervised
+%transformer which is trained to predict the next sentence given a sequence of sentences, and also for masked
+%language model. BERT’s model captures the contextual information of a word in a given sentence, along with
+%the semantic relation of a sentence to the neighboring sentences in building the whole text.\cite{mehmet2020neural}
+
+%Wu and He \cite{wu2019enriching} adjust the pre-trained BERT model to handle both sentence and its entities and they achieved better results
+%on SemEval-2010 task 8 dataset than other conventional deep learning methods.\cite{mehmet2020neural} 
+
+%Soares et al. \cite{soares2019matching} aim to build
+%task agnostic, efficient relation representations from natural text using BERT. They achieved better results
+%than previous models on SemEval-2010 task 8 and other models trained on TACRED. \cite{mehmet2020neural}
+
+Recientemente ha sido explorado el uso de \textit{transformers} \cite{vaswani2017attention} y modelos de lenguaje preentrenado, los cuales vinieron a romper con recurrencia y convolución por completo. El modelo de lenguaje preentrenado \textit{Bidirectional Encoder Representations from Transformers} (BERT) ha sido uno de los preferidos en estudios de extracción de relaciones. Este es un \textit{transformer} no supervisado que es entrenado para predecir la próxima oración dada una secuencia de oraciones y también como modelo de lenguaje enmascarado (\textit{masked language model}). BERT es capaz de capturar el contexto de una palabra en una oración dada y también la relación semántica de una oración con respecto al resto de las oraciones que compongan un texto dado \cite{mehmet2020neural}. Soares et al. \cite{soares2019matching} explora diferentes arquitecturas, todas construidas a partir de reoptimizar los parámetros de BERT, para codificar las relaciones y crear representaciones que sean independientes de esquemas de anotación. Wu and He \cite{wu2019enriching} ajustaron el modelo preentrenado BERT de modo que fuera capaz de manejar la información proveniente tanto de la oración como de las entidades señaladas.
+
+\subsection{Problema de Desbalance de Clases}
+
+%\textit{Technically speaking, any data set that exhibits an unequal distribution between its classes can be considered imbalanced. However, the common understanding in the
+%community is that imbalanced data correspond to data
+%sets exhibiting significant, and in some cases extreme,
+%imbalances.}
+%
+%\textit{ When standard learning algorithms are applied to imbalanced data, the induction rules that describe the minority concepts are often fewer and weaker than those of majority concepts, since the minority class is often both outnumbered and underrepresented.}
+
+%Técnicamente hablando, cualquier conjunto de datos que exhiba una distribución desigual entre sus clases puede considerarse desbalanceado. Sin embargo, el entendimiento común es que los datos desbalanceados corresponden a conjuntos de datos que exhiben desbalances significativos y, en algunos casos, extremos. 
+
+El problema de desbalance de clases está presente cuando se tiene que la cantidad de una clase presenta una característica irregular, es decir, que es mucho mayor o menor que en las otras clases y el costo de clasificación errónea entre estas clases es diferente, lo que lleva a fallas en los clasificadores estándar. Este es un problema relativamente común en el contexto de extracción de relaciones. Se presenta sobre todo en el enfoque ampliamente usado de definir una clase para representar la ausencia de relación entre un par de entidades. Esta nueva clase artificial suele predominar con respecto al resto \cite{nguyen2015relation}.  
+
+Los clasificadores estándar como la regresión logística (LR), la máquina de vectores de soporte (SVM) y el árbol de decisión (DT) son adecuados para conjuntos de entrenamiento balanceados. Cuando se enfrentan a escenarios desbalanceados, estos modelos a menudo brindan resultados de clasificación subóptimos \cite{huang2021LearningFC}. Al aplicar algoritmos de aprendizaje estándar a datos desbalanceados, las reglas de inducción que describen los conceptos minoritarios suelen ser menos y más débiles que las de los conceptos mayoritarios, ya que la clase minoritaria suele estar superada en número y subrepresentada.
+
+En términos generales, la relación de desbalance de clases (IR \textit{imbalance ratio}) se define como la relación entre el tamaño de la clase mayoritaria y el tamaño de la clase minoritaria, que puede medir el grado de desbalance de clases en los conjuntos de datos. Según el análisis de la literatura, mientras mayor sea el RI mayor será el impacto en los resultado de los clasificadores estándar influenciados por el desbalance de clases \cite{vong2020accurate}.
+
+%The class imbalance problem refers to the hot potato that the quantity of one class presents
+%abnormal characteristic, which is much larger or less than the other classes of samples and the cost
+%of misclassification between this classes of samples is different, leading to failure for standard
+%classifiers.
+%
+%Standard classifiers such as logistic regression (LR), Support Vector Machine (SVM) and
+%decision tree (DT) are suitable for balanced training sets. When facing imbalanced scenarios, these
+%models often provide suboptimal classification results (Ye et al., 2019).
+%
+%Generally speaking, the class imbalance ratio (IR) is defined as the ratio of majority class size to
+%minority class size, which can measure the degree of class imbalance in data sets. According to
+%literature analysis, the result of standard classifiers influenced by class imbalanced was generally
+%positive proportion that the greater IR was, the greater the impact has (Cmv and Jie, 2018).
+
+%Methods for addressing class imbalance can be divided into two main categories [29]. The first category is data level methods that operate on training set and change its class distribution. They aim to alter dataset in order to make standard training algorithms work. The other category covers classifier (algorithmic) level methods. These methods keep the training dataset unchanged and adjust training or inference algorithms. Moreover, methods that combine the two categories are available.
+
+Los métodos para abordar el desequilibrio de clases se pueden dividir en dos categorías principales \cite{huang2021LearningFC}. Además, existen métodos que combinan las dos categorías. La primera categoría está constituida por los métodos a nivel de datos que operan en el conjunto de entrenamiento y cambian su distribución de clases. Su objetivo es alterar el conjunto de datos para que funcionen los algoritmos de entrenamiento estándar. En estos casos el enfoque más sencillo y común es el uso de métodos de muestreo. El sobremuestreo (\textit{oversampling}) se utiliza ampliamente y ha demostrado ser robusto \cite{ling1998data}. Otra opción es el submuestreo (\textit{undersampling}), que en su versión ingenua, llamada submuestreo mayoritario aleatorio (\textit{random majority undersampling}), simplemente elimina una parte aleatoria de ejemplos de las clases mayoritarias. La otra categoría cubre los métodos a nivel de clasificador (algoritmos). Estos métodos mantienen el conjunto de datos de entrenamiento sin cambios y ajustan los algoritmos de entrenamiento o de inferencia. En este caso un ejemplo es la incorporación de aprendizaje asistido al proceso, lo cual será abordado con mayor profundidad en la siguiente sección. 
+
+Solo unos pocos trabajos en extracción de relaciones han tenido en cuenta el impacto de tener una cantidad extrema de instancias negativas. Nguyen et al. \cite{nguyen2015relation} usan un corpus desbalanceado para la extracción de relaciones y estudian los efectos que tiene en el desempeño de un modelo neuronal convolucional y algunos modelos de máxima entropía. dos Santos et al. \cite{santos2015classifying} se centran en aprender las características comunes de las instancias positivas, calculando solo los puntajes de las clases de relación y excluyendo la clase artificial, y proponen el entrenamiento de un modelo convolucional mediante la minimización de una función de pérdida de ranking definida por pares. Mediante experimentación prueban que su enfoque es más efectivo que una CNN seguida de un clasificador \textit{softmax} y que la supresión de la clase artificial proporciona mejorías en precisión y recobrado. Smirnova et al. \cite{smirnova2019apcnn} proponen un modelo convolucional con el que combinan varias técnicas para contrarrestar el desbalance de clases, entre ellas:  \textit{oversampling}, una función de pérdida ponderada \cite{sun2007cost} y un enfoque de divide y vencerás que divide el problema original en subproblemas más equilibrados, cuyas soluciones luego se combinan \cite{barandela2003new}.  
+
+
+% The most straightforward and common approach is the use of sampling methods.Widely  used and proven to be robust is oversampling [21]. Another option is undersampling. Naı̈ve
+% version, called random majority undersampling, simply removes a random portion of examples  from majority classes [17].
+
+\section{Aprendizaje Asistido}
+
+%Active learning (sometimes called “query learning” or “optimal experimental de-
+%sign” in the statistics literature) is a subfield of machine learning and, more gener-
+%ally, artificial intelligence. The key hypothesis is that if the learning algorithm is 
+%allowed to choose the data from which it learns—to be “curious,” if you will—it
+%will perform better with less training. \cite{settles2009survey}
+
+El aprendizaje asistido es un subcampo del aprendizaje de máquina y, en general, de la inteligencia artificial. Se basa en la idea de que si le permites a un modelo escoger los datos de los cuales aprender entonces va a ser capaz de alcanzar un mejor desempeño con menos entrenamiento.
+
+%Active learning systems attempt to overcome the labeling bottleneck by asking
+%queries in the form of unlabeled instances to be labeled by an oracle (e.g., a human
+%annotator). In this way, the active learner aims to achieve high accuracy using
+%as few labeled instances as possible, thereby minimizing the cost of obtaining
+%labeled data.\cite{settles2009survey}
+
+%Active Learning (AL) aims to reduce the amount of data annotated by the human expert. It is an iterative cyclic process
+%between an oracle (usually the human annotator) and an active learner. In contrast to passive learning, in which the
+%data is simply fed to the algorithm, the active learner chooses which samples are to be labeled next. The labeling itself,
+%however, is done by a human expert, the so-called human in the loop. Having received new labels, the active learner
+%trains a new model and the process starts from the beginning. Using the term active learner, we refer to the composition
+%of a model, a query strategy, and a stopping criterion. In this work the model is w.l.o.g. a text classification model, the
+%query strategy decides which instances should be labeled next, and the stopping criterion defines when to stop the AL
+%loop.
+
+Los sistemas de aprendizaje asistido tienen como objetivo combatir el obstáculo que representa el proceso de anotado de los datos. Se basan en un proceso cíclico iterativo entre un oráculo (normalmente el anotador humano) y un aprendiz activo. En contraste con el aprendizaje pasivo, en el que los datos simplemente se envían al algoritmo, el aprendiz activo elige qué instancias se anotarán a continuación. El anotado en sí, sin embargo, lo hace un experto humano, el llamado \textit{human in the loop}. Habiendo recibido nuevas anotaciones, el aprendiz activo entrena un nuevo modelo y el proceso comienza desde el principio. Usando el término aprendiz activo, se hace referencia a la composición de un modelo, una estrategia de consulta y un criterio de parada. El modelo será elegido de acuerdo a la tarea a realizar, la estrategia de consulta decide qué instancias deben anotarse a continuación, y el criterio de parada decide cuándo detener el ciclo. 
+
+% there are three main scenarios for AL: (1) Pool-based, in which the learner has access to
+%the closed set of unlabeled instances, called the pool; (2) stream-based, where the learner receives one instance at a time
+%and has the options to keep it, or to discard; (3) membership query synthesis, in which the learner creates new artificial instances to be labeled. If the pool-based scenario operates not on a single instance, but on a batch of instances, this
+%is called batch-mode AL
+
+%Los tres principales escenarios para el aprendizaje asistido que han sido considerados en la literatura son: (1) síntesis de consultas de membresía (\textit{membership query synthesis}), en el cual el aprendiz crea nuevas instancias artificiales para ser anotadas; (2) muestreo selectivo secuencial (\textit{stream-based selective sampling}), en el cual el aprendiz recibe las instancias de una en una y tiene la opción de anotarla o descartarla; y (3) muestreo basado en piscina (\textit{pool-based sampling}), en el cual el aprendiz tiene acceso a un conjunto cerrado de instancias sin anotar. En el caso del muestreo basado en piscina, si en lugar de escoger una sola instancia se escoge un \textit{batch} de estas, se denomina \textit{batch-mode AL}.
+
+%The underlying idea of AL is that few representative instances can be used as surrogate for the full dataset. Not only
+%does a smaller subset of the data reduce the computational costs, but also it has been shown that AL can even increase
+%the quality of the resulting model compared to learning on the full dataset 
+
+La idea subyacente de AL es que pocas instancias representativas se pueden utilizar como sustitutos del conjunto de datos completo. No solo
+un subconjunto más pequeño de los datos reduce los costos computacionales, sino que también se ha demostrado que AL puede incluso aumentar la calidad del modelo resultante en comparación con el aprendizaje usando el conjunto de datos completo. \cite{schohn2000less, figueroa2012active}
+
+\subsection{Escenarios}
+
+En el proceso de aprendizaje asisitido es variable la forma en que las instancias son presentadas al aprendiz activo. Los tres principales escenarios que han sido considerados en la literatura son: síntesis de consultas de membresía (\textit{membership query synthesis}), muestreo selectivo secuencial (\textit{stream-based selective sampling}) y muestreo basado en conjunto (\textit{pool-based sampling}). La utilidad de cada una de estas aproximaciones va a estar sujeta a la naturaleza del problema a resolver.
+
+\subsubsection{Síntesis de Consultas de Membresía}
+
+%One of the first active learning scenarios to be investigated is learning with membership queries \cite{angluin1988queriesAC}.  In this setting, the learner may request labels for any unlabeled instance in the input space, including (and typically assuming) queries that the learner generates de novo, rather than those sampled from some underlying natural distribution. \cite{settles2009survey}
+
+Uno de los primeros escenarios usados en investigaciones fue basado en consultas de membresía \cite{angluin1988queriesAC}. En esta configuración el modelo puede solicitar la anotación de cualquier instancia no anotada del espacio de entrada, que típicamente son generadas por el propio modelo en lugar de ser escogidas de alguna distribución existente. 
+
+
+%Query synthesis is reasonable for many problems, but labeling such arbitrary
+%instances can be awkward if the oracle is a human annotator.  Membership queries
+%for natural language processing tasks might create streams of text or speech that
+%amount to gibberish. The stream-based and pool-based scenarios have been proposed to address these limitations.\cite{settles2009survey}
+
+La síntesis de consultas se presenta como una aproximación acertada para muchos de los problemas, pero anotar instancias tan arbitrarias puede resultar incómodo si el oráculo es un anotador humano. En campos como el procesamiento del lenguaje natural puede que se creen instancias del problema que carezcan de sentido. El resto de los escenarios proponen formas de superar esas limitaciones.  
+
+\subsubsection{Muestreo Selectivo Secuencial}
+
+%An alternative to synthesizing queries is selective sampling \cite{atlas1989training}.  The key assumption is that obtaining an unlabeled instance is free (or inexpensive), so it can first be sampled from the actual distribution, and then the learner can decide whether or not to request its label. This approach is sometimes called stream-based or sequential active learning, as each unlabeled instance is typically drawn one at a time from the data source, and the learner must decide whether to query or discard it. If the input distribution is uniform, selective sampling may well behave like membership query learning. However, if the distribution is non-uniform and (more importantly) unknown, we are guaranteed that queries will still be sensible, since they come from a real underlying distribution.\cite{settles2009survey}
+
+Una alternativa a la síntesis de consultas es el muestreo selectivo secuencial \cite{atlas1989training}. Este asume que obtener una instancia sin anotar es libre de costo o tiene un costo despreciable. De modo que las instancias sin anotar son escogidas de una en una dentro de una distribución existente y el aprendiz activo puede decidir si solicita o no que sea anotada. La decisión de consultar o no la anotación correspondiente a una instancia va a estar determinada por la estrategia de consulta elegida. Si la distribución de la entrada es uniforme el muestreo selectivo secuencial puede comportarse como el escenario de consultas de membresía. Sin embargo si la distribución no es uniforme y es desconocida se garantiza que las consultas van a seguir siendo razonables pues provienen de una distribución real \cite{settles2009survey}.    
+
+%The decision whether or not to query an instance can be framed several ways.
+%One approach is to evaluate samples using some “informativeness measure” or “query strategy” and make a biased random decision, such that more informative instances are more likely to be queried. Another approach is to compute an explicit region of uncertainty \cite{cohn1994improvingGW} , i.e., the part of the instance space that is still ambiguous
+%to the learner, and only query instances that fall within it.  A naive way of doing
+%this is to set a minimum threshold on an informativeness measure which defines
+%the region. Instances whose evaluation is above this threshold are then queried.
+%Another more principled approach is to define the region that is still unknown to
+%the overall model class, i.e., to the set of hypotheses consistent with the current la-
+%beled training set called the version space. In other words, if any two models of the same model class (but different parameter settings) agree on all the labeled data, but disagree on some unlabeled instance, then that instance lies within the region of uncertainty. \cite{settles2009survey}
+
+
+% Un enfoque es evaluar las muestras usando alguna ¨métrica de informatividad¨ o ¨estrategia de consulta¨ de modo que las instancias que resulten más informativas sea más probable que sean consultadas. Otra vía sería calcular una región explícita de incertidumbre \cite{cohn1994improvingGW}, es decir, solo consultar aquella parte del espacio de las instancias que aún resultan ambiguas para el modelo. Una forma sencilla de hacerlo sería escoger un umbral mínimo para una medida de informatividad que defina la región. Las instancias cuya evaluación esté por encima de dicho umbral serían las consultadas \cite{settles2009survey}.  
+
+\subsubsection{Muestreo Basado en Conjuntos}
+
+% Pool-based sampling \cite{lewis1994sequential} assumes that there is a small set of labeled data L and a large pool of un-
+%labeled data U available. Queries are selectively drawn from the pool, which is
+%usually assumed to be closed (i.e., static or non-changing), although this is not
+%strictly necessary. Typically, instances are queried in a greedy fashion, according
+%to an informativeness measure used to evaluate all instances in the pool (or, per-
+%haps if U is very large, some subsample thereof). \cite{settles2009survey}
+
+El muestreo basado en conjunto \cite{lewis1994sequential} asume que existe un pequeño conjunto de datos anotados $L$ y un larga conjunto de datos sin anotar $U$.  El conjunto $U$ usualmente es cerrado, o sea, que no se le añaden instancias, aunque esto no es estrictamente necesario. Las consultas van a realizarse de instancias contenidas en ese conjunto, comúnmente siguiendo un enfoque \textit{greedy} en cuanto a la medida de informatividad usada para la evaluación de las instancias. 
+
+%The main difference between stream-based and pool-based active learning is
+%that the former scans through the data sequentially and makes query decisions
+%individually, whereas the latter evaluates and ranks the entire collection before
+%selecting the best query. While the pool-based scenario appears to be much more
+%common among application papers, one can imagine settings where the stream-
+%based approach is more appropriate. For example, when memory or processing
+%power may be limited, as with mobile and embedded devices. \cite{settles2009survey}
+
+La principal diferencia entre el muestreo selectivo secuencial y el basado en conjuntos es que el primero examina secuencialmente los datos y toma decisiones sobre las instancias de manera individual, mientras que el último evalúa y compara la colección entera para seleccionar la que considere la mejor instancia a consultar. A pesar de que el enfoque basado en conjuntos es el más comúnmente usado pueden existir entornos de trabajo donde el muestreo selectivo secuencial resulte más apropiado, por ejemplo, cuando los recursos de memoria o procesamiento sean limitados \cite{settles2009survey}.
+
+%[TODO]
+%En el caso del muestreo basado en conjuntos, si en lugar de escoger una sola instancia se escoge un \textit{batch} de estas, se denomina \textit{batch-mode AL}.
+%
+%\begin{figure}[h!]
+%	\centering
+%	\includegraphics[width = 10cm]{Images/ALCycle.png}
+%	\caption{The pool-based active learning cycle}\label{fig:palcycle}
+%\end{figure}
+
+
+
+\subsection{Estrategias de Consulta}
+
+%All active learning scenarios involve evaluating the informativeness of unlabeled
+%instances, which can either be generated de novo or sampled from a given distribu-
+%tion. There have been many proposed ways of formulating such query strategies
+%in the literature. This section provides an overview of the general frameworks that
+%are used. From this point on, I use the notation xA to refer to the most informative
+%instance (i.e., the best query) according to some query selection algorithm A. \cite{settles2009survey}
+
+Las estrategias de consulta constituyen la parte más importante del proceso de aprendizaje asisitido. Todos los escenarios posibles requieren evaluar de alguna forma el nivel de informatividad de las instancias sin anotar, las cuales pueden haber sido generadas o seleccionadas de una distribución dada.
+
+La intuición indica que sería ventajoso utilizar estrategias que sean capaces de delimitar los contornos de separación entre las diferentes clases
+con el uso de una pequeña cantidad de ejemplos. Dado que las regiones que limitan son a menudo aquellas en las que
+existen instancias de múltiples clases, se pueden caracterizar por la incertidumbre para determinar la clase o la existencia desacuerdos entre diferentes modelos. Sin embargo, ese no siempre es el caso, porque las instancias con mayor incertidumbre no son representativas de los datos y, a veces, pueden llevar a la selección de valores atípicos (\textit{outliers}) no representativos. Para abordar estos problemas, algunos modelos se centran directamente en el error en sí o intentan encontrar muestras que son representativas de los datos subyacentes. De acuerdo con lo anterior se pueden clasificar las estrategias de consulta en 3 categorías: basadas en heterogeneidad (\textit{Heterogeneity-based}), basadas en desempeño (\textit{Performance-based}) , basadas en representatividad (\textit{Representativeness-based}).
+
+%\textit{Clearly, there is significant diversity in the strategies that one may use in the active learning
+%	process. These different strategies have different tradeoffs and work differently, depending upon the
+%	underlying application, analyst goal, and data distribution.} 
+
+Existe una diversidad significativa en las estrategias que se pueden utilizar en el proceso de aprendizaje activo. La efectividad de cada una de ellas va a ser dependiente de la
+aplicación subyacente, el objetivo del analista y la distribución de los datos. 
+
+De ahora en adelante cuando se haga uso de la notación $x_A$ se refiere a la instancia más informativa de acuerdo con algún algoritmo de selección $A$.
+
+
+\subsection{Estrategias de consulta basadas en heterogeneidad}
+
+Estas estrategias intentan elegir instancias de regiones del espacio que son más heterogéneas o diferentes a lo visto hasta el momento. Ejemplos de dichas estrategias incluyen: muestreo de incertidumbre, consulta por comité y cambio de modelo esperado. Estos métodos solo miran el comportamiento de la instancia consultada en cuanto a su heterogeneidad, en lugar del efecto que tendría su adición en el rendimiento de un clasificador aplicado a las instancias restantes sin anotar. 
+
+%\textit{Heterogeneity-based models are often easy to understand and implement. However, since their goal is
+%to identify the most unknown regions of the space (based on the current labeling), they may sometimes
+%lead to the identification of noisy and unrepresentative regions of the data. This disadvantage has
+%higher impact when data is more noisy.
+%}
+Estos métodos suelen ser fáciles de entender e implementar. Sin embargo, dado que su objetivo es identificar las regiones más desconocidas del espacio (basado en el conjunto actualmente anotado), a veces pueden
+conducir a la identificación de regiones ruidosas(\textit{noisy}) y poco representativas de los datos.  
+
+\subsubsection{Muestreo de Incertidumbre}
+
+%Perhaps the simplest and most commonly used query framework is uncertainty
+%sampling \cite{lewis1994sequential}. In this framework, an active learner queries
+%the instances about which it is least certain how to label.
+
+Una de las configuraciones más simples y comunes es el muestreo de incertidumbre \cite{lewis1994sequential}, donde el modelo analiza con respecto a cuál de las instancias presenta menor seguridad (\textit{least confident}) acerca de su anotación.
+
+%For problems with three or more class labels, a more general uncertainty sam-
+%pling variant might query the instance whose prediction is the least confident:
+%
+%\begin{equation}
+%	x_{LC}^* =  \argmax_x \ \ {1 - P_{\theta}(\hat{y}|x)},
+%\end{equation}
+%
+%where $ \hat{y} = \argmax_y  P_{\theta}(y|x)$,  or the class label with the highest posterior prob-
+%ability under the model $\theta$. One way to interpret this uncertainty measure is the
+%expected 0/1-loss, i.e., the model’s belief that it will mislabel x.
+
+Una forma general de expresar el muestreo de incertidumbre para problemas con dos o más clases puede ser de la siguiente manera:
+
+\begin{equation}
+x_{LC}^* =  \argmax_x \ \ {1 - P_{\theta}(\hat{y}|x)},
+\end{equation}
+
+donde $ \hat{y} = \argmax_y  P_{\theta}(y|x)$,  o la clase con mayor probabilidad según el modelo $\theta$. Una manera de interpretar esta medida es como la convicción del modelo acerca de que va a cometer un error anotando $x$. 
+
+%
+%However, the criterion for the least confident strategy only considers informa-
+%tion about the most probable label. Thus, it effectively “throws away” information
+%about the remaining label distribution. To correct for this, some researchers use a
+%different multi-class uncertainty sampling variant called margin sampling \cite{scheffer2001activeHM}.
+%
+%\begin{equation}
+%x_{M}^* =  \argmin_x \ \ {P_{\theta}(\hat{y}_1|x) - P_{\theta}(\hat{y}_2|x)},
+%\end{equation}
+%
+%where $\hat{y}_1$ and $\hat{y}_2$  are the first and second most probable class labels under the
+%model, respectively.  Intuitively, instances with large margins are easy, since the classifier has little
+%doubt in differentiating between the two most likely class labels. Instances with
+%small margins are more ambiguous, thus knowing the true label would help the
+%model discriminate more effectively between them. However, for problems with
+%very large label sets, the margin approach still ignores much of the output distri-
+%bution for the remaining classes.
+
+Sin embargo, el criterio anterior solo tiene en cuenta información acerca de la clase más probable, por lo que desperdicia el resto de la información. Para corregir esto algunos trabajos usan otra variante llamada muestreo por margen (\textit{margin sampling}) \cite{scheffer2001activeHM}.
+
+\begin{equation}
+x_{M}^* =  \argmin_x \ \ {P_{\theta}(\hat{y}_1|x) - P_{\theta}(\hat{y}_2|x)},
+\end{equation}
+
+donde $\hat{y}_1$ y $\hat{y}_2$  son las primera y segunda clases con mayor probabilidad según el modelo, respectivamente. Intuitivamente, las instancias con mayor margen resultan más fáciles de anotar, pues el clasificador tiene menos dudas a la hora de diferenciar entre las dos clases más probables. Instancias con márgenes pequeños van a ser más ambiguas, por tanto se supone que consultarlas al oráculo ayudaría al modelo a aprender a discriminar entre esas opciones. Sin embargo,  cuando el problema consiste en decidir entre un conjunto grande de clases este enfoque sigue sin tener en cuenta gran parte de la información disponible.
+
+%A more general uncertainty sampling strategy (and possibly the most popular)
+%uses entropy \cite{shannon1948maththeory} as an uncertainty measure:
+%
+%\begin{equation}
+%x_{H}^* =  \argmax_x \ \ - \sum_i {P_{\theta}(y_i|x) \log{P_{\theta}(y_i|x)}},
+%\end{equation}
+%
+%where $y_i$  ranges over all possible labelings. Entropy is an information-theoretic
+%measure that represents the amount of information needed to “encode” a distri-
+%bution. As such, it is often thought of as a measure of uncertainty or impurity in
+%machine learning. For binary classification, entropy-based sampling reduces to
+%the margin and least confident strategies above; in fact all three are equivalent to
+%querying the instance with a class posterior closest to 0.5. However, the entropy-
+%based approach generalizes easily to probabilistic multi-label classifiers and prob-
+%abilistic models for more complex structured instances.
+
+Una estrategia más general y probablemente la más popular es el uso de la entropía \cite{shannon1948maththeory} como métrica de incertidumbre:
+
+\begin{equation}
+x_{H}^* =  \argmax_x \ \ - \sum_i {P_{\theta}(y_i|x) \log{P_{\theta}(y_i|x)}},
+\end{equation}
+
+donde $y_i$  abarca todas las posibles clases. Entropía es una medida propia de la teoría de la información que representa la cantidad de información necesaria para "codificar" una distribución, por lo que frecuentemente es usada como medida de incertidumbre o impureza. En problemas de clasificación binaria el muestreo basado en entropía se reduce a las estrategias de margen y  de menor seguridad vistas anteriormente. Sin embargo, este enfoque basado en entropía generaliza con mayor facilidad para clasificadores multiclases y modelos probabilísticos de instancias con estructuras complejas .
+
+\subsubsection{Consulta por Comité}
+
+Otra forma de selección de consultas más teóricamente motivada  es el algoritmo de consulta por comité \cite{seung1992query}. Este enfoque implica mantener un comité de modelos $ C = \{ \theta (1) , . . . , \theta(C) \} $ que están todos entrenados en el conjunto anotado actual $L$, pero representan diferentes hipótesis. Luego, cada miembro del comité puede votar sobre las anotaciones de las instancias candidatas a consultar. Se considera que la consulta más informativa es la instancia sobre la que los modelos presenten más desacuerdo.
+
+No existe un acuerdo general en la literatura sobre el tamaño de comité apropiado que se debe usar, el cual puede variar según la clase de modelo o la aplicación que se pretenda darle. Sin embargo, se ha demostrado que incluso los comités pequeños (por ejemplo, dos o tres) funcionan bien en la práctica \cite{mccallum1998employing, settles2008analysis}. 
+
+%Another, more theoretically-motivated query selection framework is the query-
+%by-committee (QBC) algorithm \cite{seung1992query}. The QBC approach involves maintaining a committee $ C = \{ \theta (1) , . . . , \theta(C) \} $ of models which are all trained on
+%the current labeled set $L$, but represent competing hypotheses. Each committee member is then allowed to vote on the labelings of query candidates. The most
+%informative query is considered to be the instance about which they most disagree. \cite{settles2009survey}
+
+%There is no general agreement in the literature
+%on the appropriate committee size to use, which may in fact vary by model class or
+%application. However, even small committee sizes (e.g., two or three) have been
+%shown to work well in practice  (Seung et al., 1992; McCallum and Nigam, 1998;
+%Settles and Craven, 2008). \cite{settles2009survey}
+
+%For measuring the level of disagreement, two main approaches have been pro-
+%posed. The first is vote entropy \cite{dagan1995committee}:
+
+Para medir el nivel de desacuerdo entre los modelos se han propuesto dos enfoques principales. Uno de ellos es entropía de voto (\textit{vote entropy}) \cite{dagan1995committee}:
+
+\begin{equation}
+x_{VE}^* =  \argmax_x \ \ - \sum_i { \frac{V(y_i)}{C} \log{\frac{V(y_i)}{C}}},
+\end{equation}
+
+donde $y_i$ abarca todas las posibles clases, y $V(y_i)$ es el número de “votos” que una clase recibe provenientes de las predicciones de los miembros del comité, y $C$ es el tamaño del comité. Este enfoque puede ser interpretado como una genralización para un comité de la medida de incertidumbre basada en entropía \cite{settles2009survey}.
+
+Otra medida de desacuerdo aplicada ha sido el promedio de divergencia Kullback-Leibler (\textit{average KL divergence}) \cite{mccallum1998employing}:
+
+\begin{equation}
+x_{KL}^* =  \argmax_x \ \ \frac{1}{C} \sum_{c=1}^{C} D(P_{\theta^{(c)}}|| P_C),
+\end{equation}
+
+donde:
+
+\begin{equation}
+D(P_{\theta^{(c)}}|| P_C) = \sum_i {P_{\theta^{(c)}}(y_i | x) \log{\frac{P_{\theta^{(c)}}(y_i | x)}{P_C(y_i | x)}}}.
+\end{equation}
+
+Aquí $\theta^{(c)}$ representa un determinado modelo en el commité, y $C$ represents el commité como un todo, por tanto $P_C(y_i | x) = \frac{1}{C} \sum_{c = 1}^{C} P_{\theta^{(c)}}(y_i | x)$ es la probabilidad de “consenso” acerca de que $y_i$ es la clase correcta. La divergencia KL (\textit{KL divergence}) \cite{kullback1951oninfo} es una métrica teórica de información, que mide la diferencia entre dos distribuciones de probabilidad. Por tanto esta medida de desacuerdo considera que la consulta más informativa sería aquella con la mayor diferencia promedio entre las distribuciones de clases de cualquier miembro del comité y el consenso. \cite{settles2009survey}
+
+\subsubsection{Cambio Esperado del Modelo}
+
+Otro enfoque teórico de decisión para las estrategias de consulta se basa en seleccionar la instancia que impartiría el mayor cambio al modelo actual si conocíeramos su clase. Un ejemplo consiste en considerar la "longitud de gradiente esperada" ( EGL \textit{expected gradient length}) para modelos probabilísticos discriminativos.
+
+En teoría, la estrategia EGL se puede aplicar a cualquier problema de aprendizaje en el que se utilice el entrenamiento basado en gradientes. Dado que los modelos probabilísticos discriminativos generalmente se entrenan usando optimización basada en gradientes, el ''cambio'' impartido al modelo se puede medir por la longitud del gradiente de entrenamiento (es decir, el vector utilizado para volver a estimar los valores de los parámetros). En otras palabras, el apendiz activo debe consultar la instancia $x$ que, si se etiqueta y se agrega a $L$, daría como resultado el nuevo gradiente de mayor magnitud. Sea $\nabla l_{\theta}(L) $   el gradiente de la función objetivo $l$ con respecto a los parámetros del modelo $\theta$.  Además, sea $ \nabla l_{\theta}(L \cup \langle x,y \rangle )$ el nuevo gradiente que se obtendría al añadir la tupla $\langle x,y \rangle$ a $L$. Dado que el algoritmo no conoce la verdadera clase de $y$ es necesario calcular la medida de expectación para las posibles clases:
+
+\begin{equation}
+x_{EGL}^* =  \argmax_x \  \sum_i P_{\theta}(y_i|x) \parallel \nabla l_{\theta}(L \cup \langle x,y_i \rangle ) \parallel,
+\end{equation}
+
+donde $ \parallel \cdot \parallel$  es, en este caso, la norma euclideana de cada vector de gradiente resultante  \cite{settles2009survey}.
+
+%Another general active learning framework uses a decision-theoretic approach, selecting the instance that would impart the greatest change to the current model if
+%we knew its label. An example query strategy in this framework is the “expected gradient length” (EGL) approach for discriminative probabilistic model classes.  \cite{settles2009survey}
+
+%In theory, the EGL strategy can be applied to any learning problem where gradient-based training is used. Since discriminative probabilistic models are usually trained using gradient-based optimization, the “change” imparted to the model can be measured by the length of the training gradient (i.e., the vector used to re-estimate parameter values). In other words, the learner should query the instance x which, if labeled and added to $L$, would result in the new training
+%gradient of the largest magnitude. 
+
+
+%The intuition behind this framework is that it prefers instances that are likely
+%to most influence the model (i.e., have greatest impact on its parameters), regard-
+%less of the resulting query label. This approach has been shown to work well in
+%empirical studies, but can be computationally expensive if both the feature space
+%and set of labelings are very large.  \cite{settles2009survey}
+
+La intuición detrás de este enfoque es que prefiere instancias que sean más diferentes a las analizadas hasta el momento y es más probable que influyan en el modelo (es decir, tengan el mayor impacto en sus parámetros), sin tener en cuenta la clase resultante. Se ha demostrado que este enfoque funciona bien en estudios empíricos, pero puede ser computacionalmente costoso si tanto el espacio de características y el conjunto de clases son muy grandes \cite{settles2009survey}.  
+
+
+\subsection{Estrategias de consulta basadas en desempeño}
+
+Este enfoque intenta optimizar directamente el desempeño del modelo que se está entrenando en cuanto a medidas como la reducción del error o de la varianza. Una característica de
+estos métodos es que observan el efecto de agregar la instancia consultada en el desempeño del clasificador aplicado a las instancias que restan por anotar. 
+
+La principal ventaja de las estrategias basadas en desempeño sobre las basadas en heterogeneidad es que pretenden
+mejorar el comportamiento de error en las muestras agregadas, en lugar de mirar el comportamiento de incertidumbre
+de las instancias consultadas. Por lo tanto, se evitan las muestras no representativas o atípicas. Sin embargo, estos
+métodos son computacionalmente muy costosos e ineficientes para modelos grandes o conjuntos de datos muy grandes. 
+
+%The main advantage of performance-based over heterogeneity-based models is that they intend to
+%improve the error behavior on the aggregated samples, rather than looking at the uncertainty behavior
+%of the queried instances. Therefore, unrepresentative or outlier samples are avoided. However, these
+%methods are computationally very expensive and inefficient for large models or very large dataset.
+
+
+% These models attempt to directly optimize the performance of the classifier in terms of measures such as error or variance reduction. One characteristic of
+%these methods is that they look at the effect of adding the queried instance on the performance
+%of the classifier on the remaining unlabeled instances.
+
+
+\subsubsection{Reducción de Error}
+
+%These strategies estimate the expected future error that would result if some new instance is labeled
+%and added to the labeled instances used for training. And then, it selects the instance that minimizes
+%that expectation. This strategy was first introduced by [29] for text classification using naive Bayes.
+%This framework requires estimating the expected future error over unlabeled samples for each query
+%instance. It also needs to incrementally re-train the learning model for each possible labeling. This
+%leads to a drastic increase in computational cost (expected error reduction may be the most expensive
+%active learning framework [31]). 
+
+%Another decision-theoretic approach aims to measure not how much the model is likely to change, but how much its generalization error is likely to be reduced. The
+%idea it to estimate the expected future error of a model trained using $L \cup \langle x,y \rangle $ on
+%the remaining unlabeled instances in $U$ (which is assumed to be representative of the test distribution, and used as a sort of validation set), and query the instance
+%with minimal expected future error (sometimes called risk).
+
+Otro enfoque teórico de decisión tiene como objetivo medir no cuánto es probable que cambie el modelo, sino cuánto es probable que se reduzca su error de generalización. La
+idea es estimar el error futuro esperado de un modelo entrenado usando $ L \cup \langle x, y \rangle $ en
+las instancias restantes sin etiquetar en $ U $ (que se supone que son representativas de la distribución del conjunto de prueba y se utiliza como una especie de conjunto de validación), y consultar la instancia
+con un mínimo error futuro esperado. 
+
+%One approach is to minimize the expected 0/1-loss:
+%
+%\begin{equation}
+%x_{0/1}^* =  \argmin_x \ P_{\theta}(y_i|x) \left( \sum_{u = 1}^{U}  1 - P_{\theta^{+\langle x,y_i \rangle}}(\hat{y}|x^{(u)}) \right),
+%\end{equation}
+%
+%where $\theta^{+\langle x,y_i \rangle}$  refers to the the new model after it has been re-trained with the	training tuple $langle x,y_i \rangle$ added to $L$. The objective here is to reduce the expected total number of incorrect predictions. Another, less stringent objective is to minimize the expected log-loss:
+%
+%\begin{equation}
+%x_{log}^* =  \argmin_x \ \sum_i P_{\theta}(y_i|x) \left( - \sum_{u = 1}^{U} \sum_j P_{\theta^{+\langle x,y_i \rangle}} (y_j|x^{(u)}) \log P_{\theta^{+\langle x,y_i \rangle}} (y_j|x^{(u)}) \right),
+%\end{equation}
+%
+%which is equivalent to reducing the expected entropy over $U$. Another interpretation of this strategy is maximizing the expected information gain of the query $x$,
+%or (equivalently) the mutual information of the output variables over $x$ and $U$. \cite{settles2009survey}
+
+%In most cases, unfortunately, expected error reduction is also the most computationally expensive query framework. Not only does it require estimating the expected future error over U for each query, but a new model must be incrementally re-trained for each possible query labeling, which in turn iterates over the entire pool. This leads to a drastic increase in computational cost. \cite{settles2009survey} Because of this, the applications of the estimated error
+%reduction framework have mostly only considered simple binary classification tasks.
+
+En la mayoría de los casos, desafortunadamente, la reducción de error esperada es la estrategia de consulta más costosa desde el punto de vista computacional. No solo requiere estimar el error futuro esperado sobre $U$ para cada consulta, sino que se debe volver a entrenar de forma incremental un nuevo modelo para cada posible anotación de una consulta, que a su vez itera sobre todo el grupo. Esto conduce a un aumento drástico en el costo computacional. \cite{settles2009survey}. Debido a esto su aplicación generalmente solo se considera en tareas simples de clasificación binaria. 
+
+
+\subsubsection{Reducción de Varianza}
+
+Esta estrategia se basa en que se puede decir que el error de generalización general se puede expresar como la suma de tres términos. El primero es (\textit{noise}), es decir, la varianza de la clase verdadera $y$ dada solo $x$, la cual no depende del modelo o de los datos entrenantes. Dicho (\textit{noise}) puede resultar de efectos estocásticos del método utilizado para obtener las etiquetas, por ejemplo, o porque la representación de características es inadecuada. El segundo término es el sesgo (\textit{bias}), que representa el error debido a la clase del modelo en sí, por ejemplo, si se usa un modelo lineal para aprender una función que es solo aproximadamente lineal. Este componente del error general es invariante dada una clase de modelo fija. El tercer término es la varianza del modelo, que es el componente restante de la \textit{squared-loss} del modelo con respecto a la función objetivo \cite{geman1992neural}.  De esos términos solo el último depende en gran medida de la elección de instancias seleccionadas. Por lo tanto, es posible reducir la varianza en lugar del error.
+
+%The first term on the right-hand side of this equation is noise, i.e., the variance of the true label y given only x, which does not depend on the model or training data. Such noise may result from stochastic effects of the method used to obtain the labels, for example, or because the feature representation is inadequate. The
+%second term is the bias, which represents the error due to the model class itself, e.g., if a linear model is used to learn a function that is only approximately linear. This component of the overall error is invariant given a fixed model class.
+%The third term is the model’s variance, which is the remaining component of the learner’s squared-loss with respect to the target function. Minimizing the variance, then, is guaranteed to minimize the future generalization error of the model
+%(since the learner itself can do nothing about the noise or bias components).
+
+
+La principal ventaja de esta estrategia sobre la reducción del error esperado es la disminución en el cálculo
+requerido y la capacidad de expresar la varianza en una forma cerrada y, por lo tanto, lograr una mayor eficiencia computacional.
+
+%Using the result of [14], we can say that the overall generalization error can be expressed as sum of
+%the true label noise, model bias, and variance. Of these, only the last term is highly dependent on the
+%choice of instances selected. Therefore, it is possible to reduce the variance instead of the error.
+%The main advantage of this strategy over expected error reduction, is the decrease in computational
+%requirements and the ability to express the variance in closed form, and therefore achieving greater
+%computational efficiency.
+%When the learning model has d parameters and we have U unlabeled samples, the time complexity
+%of this method is of O(U × d3 ). This quickly becomes intractable for large d and U . As a solution,
+%many methods have been proposed that approximate the variance such as [28], [17]. However, these
+%methods are still empirically much slower than simpler query strategies like uncertainty sampling.
+
+
+\subsection{Estrategias de consulta basadas en representatividad}
+
+Este enfoque se centra en escoger datos que sean lo más representativos posible de la distribución subyacente de instancias para entrenar. Por ejemplo, las estrategias basadas en densidad son un ejemplo de tales escenarios. Estas se basan en la ponderación de las regiones densas del espacio de entrada en un grado más alto durante el proceso de consulta.
+
+%These models attempt to create data that is as representative as possible of the underlying population of training instances. For example, density-based models are an example of such scenarios. 
+%
+%These models query the data such that the acquired instances resemble the overall distribution better.
+%This is achieved by weighting dense regions of the input space to a higher degree during the querying
+%process.
+
+\subsubsection{Density-Weighted Methods}
+
+%In these cases, a product of a heterogeneity criterion and a representativeness criterion is used in order to model the desirability of querying a
+%particular instance. Thus, these methods try to balance the representativeness criteria with the
+%uncertainty properties of the queried instance.
+
+Estos métodos utilizan el producto de un criterio de heterogeneidad y un criterio de representatividad para modelar la conveniencia de consultar un
+instancia particular. Así, intentan equilibrar los criterios de representatividad con las propiedades de incertidumbre de la instancia consultada. 
+
+Settles et al. \cite{settles2008analysis} describe una técnica general para ponderar usando la densidad. La idea principal es que las instancias informativas no solo deben ser aquellas que son inciertas, sino también aquellas que son "representativas" de la distribución subyacente (es decir, habitan regiones densas del espacio de entrada). Por tanto lo que se quiere calcular es: 
+
+%The information density framework described by  is a general density-weighting
+%technique. The main idea is that informative instances should not only be those which are uncertain, but also those which are “representative” of the underlying
+%distribution (i.e., inhabit dense regions of the input space). Therefore, we wish to
+%query instances as follows:
+
+\begin{equation}
+x_{ID}^* =  \argmax_x \ \phi_A(x) \times {\left( \frac{1}{U} \sum_{u = 1}^{U} \mathrm{sim}(x,x^{(u)}) \right)}^{\beta},
+\end{equation}
+
+%represents the informativeness of $x$ according to some “base” query strategy $A$, such as an uncertainty sampling or QBC approach. The second term
+%weights the informativeness of $x$ by its average similarity to all other instances in the input distribution (as approximated by $U$), subject to a parameter $\beta$ that controls the relative importance of the density term. A variant of this might first cluster $U$ and compute average similarity to instances in the same cluster. \cite{settles2009survey}
+
+donde $\phi_A(x)$ representa el carácter informativo de $x$ de acuerdo con alguna estrategia de consulta “base” $A$, como un muestreo de incertidumbre o un enfoque de consulta por comité. El segundo término pondera el carácter informativo de $x$ por su similitud promedio con todas las demás instancias en la distribución de entrada (se aproxima por $U$), sujeto a un parámetro $\beta$ que controla la importancia relativa del término de densidad. Una variante de esto podría agrupar primero $U$ y calcular la similitud promedio con instancias en el mismo grupo (\textit{cluster}) \cite{settles2009survey}.
+
+
+\subsection{Estrategias de consulta híbridas}
+Los enfoques convencionales para el aprendizaje activo suelen seleccionar instancias informativas o representativas. Sin embargo, también hay trabajos que combinan varios criterios para la selección de consultas en aprendizaje activo \cite{dasgupta2009analysis, hoi2008semisupervised, huang2014active}, de modo que las instancias consultadas tendrán las siguientes propiedades:
+1) Informativas, la instancia consultada estará cerca del límite de decisión del modelo de aprendizaje en términos de criterios como la incertidumbre, o la instancia consultada debe estar lejos de las instancias anotadas existentes con el fin de aportar nuevos conocimientos sobre el espacio de características. 2) Representativas, la instancia consultada deberá tener menos probabilidades de ser información atípica (\textit{outlier}) y debe ser representativa de un grupo de otros datos no anotados. Por ejemplo, Huang et al. \cite{huang2014active} llevan a cabo la selección de la consulta basada en la informatividad
+y representatividad de las instancias no anotadas. Se utiliza un enfoque mín-máx de aprendizaje activo para medir las puntuaciones de ambos criterios. 
+
+
+%Conventional approaches for active learning usually select either informative or representative
+%unlabeled instances. There are also some works combining multiple criteria for query selection in
+%active learning [31, 58, 59, 120], such that the queried instances will have the following properties:
+%1) Informative, the queried instance will be close to the decision boundary of the learning model in
+%terms of criteria like uncertainty, or the queried instance should be far away from existing labeled
+%instances in order to bring new knowledge about the feature space. 2) Representative, the queried
+%instance should be less likely to be outlier data and should be representative to a group of other unlabeled data. For example, in the work [59], the query selection is based upon both informativeness
+%and representativeness of the unlabeled instances. A min-max framework of active learning is used
+%to measure scores for both criteria.
+
+
+\section{Deep Active Learning}
+
+
+La aplicación de técnicas de aprendizaje profundo ha logrado avances sin precedentes en varias
+tareas desafiantes. Sin embargo, esto se debe en gran parte a la publicación de grandes conjuntos de datos etiquetados. \cite{bengio2006greedy,krizhevsky2012imagenet}. Por lo tanto, el aprendizaje profundo está limitado por el alto costo del anotado de datos en algunos campos profesionales
+que requieren conocimiento de temas específicos. Un algoritmo de aprendizaje asistido eficaz teóricamente puede lograr aceleración exponencial de la eficiencia del anotado \cite{balcan2009agnostic}. Por lo tanto, la combinación de aprendizaje profundo y asistido se supone que logre resultados superiores. Sin embargo, aunque la investigación relacionada con aprendizaje asistido y las diferentes estrategias de consulta es bastante rica, todavía resulta difícil de aplicarse directamente al uso de aprendizaje profundo. Esto se debe principalmente a: 
+
+%DL has achieved unprecedented breakthroughs in various
+%challenging tasks; however, this is largely due to the publication of massive labeling datasets
+%[16, 87]. Therefore, DL is limited by the high cost of sample labeling in some professional fields
+%that require rich knowledge. In comparison, an effective AL algorithm can theoretically achieve
+%exponential acceleration in labeling efficiency [12]. This huge potential saving in labeling costs is a fascinating development. However, the classic AL algorithm also finds it difficult to handle
+%high-dimensional data [160]. Therefore, the combination of DL and AL, referred to as DAL, is
+%expected to achieve superior results.
+
+%DL has a strong learning ability in the context of high-dimensional data processing and automatic feature extraction, while AL has significant potential to effectively reduce labeling costs. Therefore,
+%an obvious approach is to combine DL and AL, as this will greatly expand their application potential.
+%This combined approach, referred to as DAL, was proposed by considering the complementary advantages of the two methods, and researchers have high expectations for the results of studies in
+%this field.
+
+% However, although AL-related research into query strategy is quite rich, it is still quite difficult to apply this strategy directly to DL. This is mainly due to:
+
+\begin{enumerate}
+	\item Insuficiente cantidad de instancias anotadas. AL a menudo se basa en una pequeña cantidad de instancias anotadas para entrenar y actualizar el modelo, mientras que DL suele ser muy ávido de datos. Por lo tanto, las muestras de entrenamiento anotadas proporcionadas por el método AL clásico son insuficientes para respaldar el entrenamiento requerido por el DL tradicional. Además, el método de consulta de muestra uno por uno comúnmente utilizado en AL tampoco es aplicable en el contexto de DL \cite{zhdanov2019diverse}.
+	%	 Insufficient data for label samples. AL often relies on a small amount of labeled sample data
+	%	to learn and update the model, while DL is often very greedy for data [63]. The labeled
+	%	training samples provided by the classic AL method thus insufficient to support the training
+	%	of traditional DL. In addition, the one-by-one sample query method commonly used in AL is
+	%	also not applicable in the DL context [183].
+	%	
+	\item Incertidumbre del modelo. La estrategia de consulta basada en la incertidumbre juega un papel importante dentro de la investigación de AL. En las tareas de clasificación, aunque DL puede usar la capa \textit{softmax} para obtener la distribución de probabilidad de las clases, los hechos muestran que tienen demasiada confianza. La respuesta softmax (SR) \cite{wang2017cost} del resultado final no es confiable como medida de incertidumbre y, por lo tanto, el rendimiento de este método será incluso peor que el del muestreo aleatorio \cite{wang2014anew}. 
+	
+	%	 Model uncertainty. The query strategy based on uncertainty is an important direction of
+	%	AL research. In classification tasks, although DL can use the softmax layer to obtain the
+	%	probability distribution on the label, the facts show that they are too confident. The softmax
+	%	response (SR) [166] of the final output is unreliable as a measure of confidence, and the
+	%	performance of this method will thus be even worse than that of random sampling [165].
+	%	
+	\item Incoherencia en el \textit{pipeline} de procesamiento. Los \textit{pipeline} de procesamiento de AL y DL son inconsistentes. La mayoría de los algoritmos de AL se centran principalmente en el entrenamiento de clasificadores, y las diversas estrategias de consulta utilizadas se basan en gran medida en representaciones de características fijas. En DL, sin embargo, el aprendizaje de características y el entrenamiento del clasificador se optimizan de forma conjunta \cite{wang2017cost}.
+	
+	%	 Processing pipeline inconsistency.The processing pipelines of AL and DL are inconsistent.
+	%	Most AL algorithms focus primarily on the training of classifiers, and the various query
+	%	strategies utilized are largely based on fixed feature representations. In DL, however, feature
+	%	learning and classifier training are jointly optimized. Only fine-tuning the DL models in the
+	%	AL framework, or treating them as two separate problems, may thus cause divergent issues
+	%	[166].	
+	%	
+\end{enumerate}
+
+Para abordar el primer problema, los investigadores han considerado el uso de redes generativas para el aumento de datos \cite{tran2019bayesian} o la asignación de pseudo-etiquetas a instancias que presenten alta confianza para expandir el conjunto de entrenamiento anotado \cite{wang2017cost}. Algunos investigadores también han utilizado conjuntos de datos etiquetados y no etiquetados para combinar el entrenamiento supervisado y semisupervisado en los ciclos de AL \cite{hossain2019active, simeoni2020rethinking}. Además, las estrategias de consulta de AL basadas en heurísticas anteriores han demostrado ser ineficaces cuando se aplican a DL \cite{sener2018coreset}; por lo tanto,en lugar de analizar las instancias una por una, muchos investigadores se enfocan en adaptar las estrategias de consulta para procesar las instancias por lotes (\textit{batches}) \cite{ash2020deep, gissin2019discriminative, kirsch2019batchbald, zhdanov2019diverse}, teniendo en cuenta tanto la cantidad de información como la diversidad de las muestras por lotes. 
+
+%\textit{In classical active learning setting a single instance at each iteration is chosen. However, the sequential active learning methods have many drawbacks when combined with expensive complex models, such as neural networks: training
+%	deep networks usually takes a long time, and therefore updating the model after each label is costly in terms of both the human annotation time waiting for the next datum to tag as well as compu-
+%	tational resources. Moreover, due to the local optimization methods used for training neural networks it is highly unlikely for a single
+%	point to result in significant impact on the performance. Therefore in practical applications it is often useful to perform batch active
+%	learning, as the cost of acquiring a batch of labels for training might be significantly less than the cost of acquiring the same number of sequential individual label requests. This holds true when the time to update the model and select the next example is prohibitively large. But under labeling budget constraints there is an inherent trade-off between efficiency and performance, as large batches will
+%	result in less frequent model updates and increased prediction error. \cite{lourentzou2018exploring}
+%}
+
+
+Para resolver el problema de la incertidumbre del modelo en DL, algunos investigadores han aplicado el aprendizaje profundo bayesiano en el contexto de AL \cite{gal2017deep, pop2018deep,kirsch2019batchbald}, aliviando así eficazmente
+el problema de que el modelo DL tenga demasiada confianza en los resultados de salida. 
+
+Además, para abordar el problema de la inconsistencia en los \textit{pipelines}, los investigadores han considerado modificar el enfoque combinado de AL y DL para hacer que el modelo propuesto sea lo más general posible. Por ejemplo, Yoo et al. \cite{yoo2019learning} incorporan la idea de AL dentro de DL y, en consecuencia, proponen un diseño de arquitectura independiente de la tarea.
+
+%	To address the first problem, researchers have considered using generative networks for data
+%augmentation [162] or assigning pseudo-labels to high-confidence samples in order to expand the
+%labeled training set [166]. Some researchers have also used labeled and unlabeled datasets to combine
+%supervised and semisupervised training across AL cycles [65, 148]. In addition, previous heuristic-
+%based AL [139] query strategies have proven to be ineffective when applied to DL [138]; therefore,
+%for the one-by-one query strategy in classic AL, many researchers focus on the improvement of
+%the batch sample query strategy [10, 51, 84, 183], taking both the amount of information and the
+%diversity of batch samples into account.
+
+% In order to solve the neglect of model uncertainty in DL,
+%some researchers have applied Bayesian deep learning [45] to deal with the high-dimensional mini-
+%batch samples with fewer queries in the AL context [47, 84, 118, 162], thereby effectively alleviating
+%the problem of the DL model being too confident about the output results.
+
+% Furthermore, to deal
+%with the pipeline inconsistency problem, researchers have considered modifying the combined
+%framework of AL and DL to make the proposed DAL model as general as possible, an approach that
+%can be extended to various application fields. This is of great significance to the promotion of DAL.
+%For example, [178] embeds the idea of AL into DL and consequently proposes a task-independent
+%architecture design.
+
+
+%\begin{figure}[h!]
+%	\centering
+%	\includegraphics[width = 10cm]{Images/DALCycle.png}
+%	\caption{The pool-based active learning cycle}
+%	\label{fig:pdalcycle}
+%\end{figure}
+
+\subsection{Query Strategy Optimization in DAL}
+
+The main difference between DAL and classic AL is that DAL uses batch-based sample querying. In traditional AL, most algorithms use a one-by-one query
+method, which leads to frequent training of the learning model but little change in the training
+data. The training set obtained by this query method is not only inefficient in the training of the
+DL model, but can also easily lead to overfitting.
+
+A naive approach would be to continuously query a batch of samples based on the one-by-
+one strategy. For example, [46, 73] adopts the method of batch acquisition, and chooses to query
+Bayesian Active Learning by Disagreement (BALD) [67] to obtain the top b samples with the
+highest scores. Obviously, however, this method is not feasible, as it is very likely to choose a set
+of information-rich but similar samples. Therefore, the core of BMDAL is to query a set of samples that are both information-rich and diverse.
+
+In addition to the corresponding query strategy, some researchers have also considered the
+impact of batch query size on query performance. For example, [10, 84, 117, 183] focus primarily
+on the optimization of query strategies in smaller batches, while [27] recommended expanding the
+query scale of AL for large-scale sampling (10k or 500k samples at a time). Moreover, by integrating
+hundreds of models and reusing intermediate checkpoints, the distributed searching of training
+data on large-scale labeled datasets can be efficiently realized with a small computational cost. [27]
+also proved that the performance of using the entire dataset for training is not the upper limit of
+performance, as well as that AL based on subsets specifically may yield better performance.
+
+
+In general, these query strategies are not independent of each other, but are rather interrelated.
+Batch-based BMDAL provides the basis for the update training of AL query samples on the DL
+model. Although the query strategies in DAL are rich and complex, they are largely designed to take
+the diversity and uncertainty of query batches in BMDAL into account. Previous uncertainty-based
+methods often ignore the diversity in the batch, and can thus be roughly divided into two categories:
+those that design a mechanism that explicitly encourages batch diversity in the input or learning
+representation space, and those that directly measure the mutual information (MI) of the entire
+batch.
+
+The batch-based query strategy forms the basis of the combination of AL and DL, and related
+research on this topic is also very rich. We will provide a detailed overview and discussion of
+BMDAL query strategies in the following sections.
+
+\subsubsection{Uncertainty-based and hybrid query strategies}
+There are many DAL [9, 59, 114, 123] methods that directly utilize an uncertainty-based sampling
+strategy. However, as analyzed in Section 3.1.1, this can easily lead to insufficient diversity of
+batch query samples (such that relevant knowledge regarding the data distribution is not fully
+utilized), which in turn leads to low or even invalid DL model training performance. A feasible
+strategy would thus be to use a hybrid query strategy in a batch query, taking into account both
+the information volume and diversity of samples in either an explicit or implicit manner.
+
+Early Batch Mode Active Learning (BMAL) [20, 77, 111, 171, 173] algorithm performance is often
+excessively reliant on the measurement of similarity between samples. In addition, these algorithms
+are often only good at exploitation (learners tend to focus only on samples near the current decision
+boundary, corresponding to high-information query strategies), meaning that the samples in the
+query batch sample set cannot represent the true data distribution of the feature space (due to the
+insufficient diversity of batch sample sets).
+
+Moreover, DBAL [183] adds informativeness to the optimization goal of K-means by weight, and
+further presents an in-depth study of a hybrid query strategy that considers the sample information
+volume and diversity under the mini-batch sample query setting. DBAL [183] can easily achieve
+expansion from the generalized linear model to DL; this not only increases the scalability of DBAL
+[183] but also increases the diversity of active query samples in the mini-batch. This hybrid query
+strategy is quite popular. 
+
+Although the above improvements have resulted in good performance, there is still a hidden
+danger that must be addressed: namely, that, diversity-based strategies are not appropriate for
+all datasets. More specifically, the richer the category content of the dataset, the larger the batch
+size, and the better the effect of diversity-based methods; by contrast, an uncertainty-based query
+strategy will perform better with smaller batch sizes and less rich conten. These characteristics
+depend on the statistical characteristics of the dataset.
+
+Notably, although the hybrid query strategy achieves superior performance, the uncertainty-
+based AL query strategy is more convenient to combine with the output of the softmax layer of DL.
+Thus, the query strategy based on uncertainty is still widely used.
+
+
+\subsubsection{Deep Bayesian Active Learning (DBAL)}
+As noted in Section 2, which analyzed the challenge
+of combining DL and AL, the acquisition function based on uncertainty is an important research
+direction of many classic AL algorithms. Moreover, traditional DL methods rarely represent such
+model uncertainty.
+For this reason, Deep Bayesian Active Learning has been developed. In the given input set $X$
+and the output $Y$ belonging to class, the probabilistic neural network model can be defined as $f(x;\theta)$,$p(\theta)$ is a prior on the parameter space $\theta$ (usually Gaussian), and the likelihood $p(y = c |x, \theta)$ is usually determined by $softmax(f (x; \theta ))$ given. Our goal is to obtain the posterior distribution
+over $\theta$ , as follows:
+
+\begin{equation}
+p(\theta | X,Y) = \frac{p(Y|X,\theta)p(\theta)}{p(Y|X)} 
+\end{equation}
+
+For a given new data point $x^{\ast}$, $\hat{y}$ is predicted by:
+
+\begin{equation}
+p (\hat{y}|x^\ast, X , Y ) = \int p(\hat{y}| x, \theta) p(\theta|X,Y)d\theta = \mathbb{E}_{\theta \sim p(\theta|X,Y)}[f(x;\theta)]
+\end{equation}
+
+DBAL [47] combines Bayesian convolutional neural networks (BCNNs) [45] with AL methods to
+adapt BALD [67] to the deep learning environment, thereby developing a new AL framework for
+high-dimensional data. This approach adopts the above method to first perform Gaussian prior
+modeling on the weights of a CNN, and then uses variational inference to obtain the posterior
+distribution of network prediction. In addition, in practice, researchers often also use a powerful
+and low-cost Monte-Carlo dropout (MC-dropout) [156] stochastic regularization technique to
+obtain posterior samples, consequently attaining good performance on real-world datasets [80, 94].
+Moreover, this regularization technique has been proven to be equivalent to variational inference
+[46]. However, a core-set approach [138] points out that DBAL [47] is unsuitable for large datasets
+due to the need for batch sampling. It should be noted here that while DBAL [47] allows the use of
+dropout in testing for better confidence estimation, the analysis presented in [51] contends that the
+performance of this method is similar to the performance of using neural network softmax response
+(SR) [166] as uncertainty sampling, which requires vigilance. 
+
+BatchBALD [84] opts to expand BALD [67] to the batch query
+context; this approach no longer calculates the mutual information between a single sample and
+model parameters, but rather recalculates the mutual information between the batch samples and
+the model parameters to jointly score the batch of samples. This enables, BatchBALD to more
+accurately evaluate the joint mutual information.
+
+\subsubsection{ Density-based Methods}
+The term, density-based method, mainly refers to the selection of samples from the perspective of the set (core set). The construction of the core set is a representative query strategy. This idea is mainly inspired by the compression idea of the coreset dataset, and attempts to use the core set to represent the distribution of the feature space of the entire original dataset, thereby reducing the labeling cost of AL.
+
+Farthest First Active Learning (FF-Active) [49] is based on this idea and uses the farthest-first
+traversals in the space of neural activation over a representation layer to query consecutive points
+from the pool. It is worth noting here that FF-Active [49] and Exploration-P [177] resemble the
+way in which random queries are used in the early stages of AL to enhance AL’s exploration
+ability, which prevents AL from falling into the trap of insufficient sample diversity. Similarly, in
+order to solve the sampling bias problem in batch querying, the diversity of batch query samples
+is increased. The Core-set approach [138] attempts to solve this problem by constructing a core
+subset. A further attempt was made to solve the k-Center problem [38] by building a core subset,
+so that the model learned on the selected core set will be more competitive than the rest of the data.
+However, the Core-set approach requires a large distance matrix to be built on the unlabeled data
+set, meaning that this search process is computationally expensive; this disadvantage will become more apparent on large-scale unlabeled datasets [10].
+Discriminative Active Learning (DAL) [51] also regards AL as a binary classification task, and further aims to make the queried labeled dataset indistinguishable from the unlabeled dataset. The key advantage of DAL [51] is that it can sample from unlabeled dataset in proportion to the data density, without biasing the sample points in the sparse popular domain. Moreover, the method proposed by DAL [51] is not limited to classification tasks, which
+are conceptually easy to transfer to other new tasks.
+
+Density-based methods primarily consider the selection of core subsets from the perspective of
+data distribution. There are relatively few related research methods, which suggests a new possible
+direction for sample querying.
+
+
+\subsubsection{ Other Methods}
+
+ There are also some existing studies that are not as focused as the above query methods; we will summarize them below.
+
+For example, [37] redefines the heuristic AL algorithm as a reinforcement learning problem and
+introduces a new description through a clear selection strategy. Unlike most previous uncertainty-
+based methods, DFAL [36] contends that these methods are easily fooled by adversarial examples;
+thus, it focuses on the study of examples near the decision boundary, and actively uses the in-
+formation provided by these adversarial examples on the input spatial distribution in order to
+approximate their distance to the decision boundary.
+
+[14] found that compared with the Bayesian deep learning approach (Monte-Carlo dropout [47]) and density-based [137] methods, ensemble-based AL can
+effectively offset the imbalance of categories in the dataset during the acquisition process, resulting
+in more calibration prediction uncertainty, and thus better performance.
+
+Some researchers have also noted that, in traditional AL workflows, the acquisition function
+is often regarded as a fixed known prior, and that it will not be known whether this acquisition
+function is appropriate until the label budget is exhausted. This makes it impossible to flexibly and
+quickly tune the acquisition function. Accordingly, one good option may be to use reinforcement
+learning to dynamically tune the acquisition function. RAL [57] DRAL [100]
+
+
+\section{Extracción de Relaciones con Aprendizaje Asistido}
+
+El aprendizaje asistido en el contexto de extracción de relaciones se presenta generalmente como muestreo basado en conjuntos \cite{lourentzou2018mining, zhang2012unified, roth2008pipeline,fu2013efficient}. Además resulta muy común que en lugar de escoger una sola instancia en cada interación del algoritmo se escoja un lote (\textit{batch}) de estas, especialmente en los casos en que se están entrenando modelos neuronales \cite {lourentzou2018difficult,lourentzou2018exploring,lourentzou2018mining}.
+
+
+
+
+Se ha aplicado aprendizaje asistido en la extracción conjunta de entidades y relaciones. 
+Roth et al. \cite{ roth2008pipeline} proponen un método general para combinar enfoques de aprendizaje activo para cada etapa separada de un \textit{pipeline} en una estrategia conjunta de aprendizaje activo que explota explícitamente las propiedades del \textit{pipeline}. Demuestran la efectividad de su propuesta en un sistema de extracción de entidades y relaciones de tres etapas, donde se aprecia una reducción significativa en la necesidad de datos anotados. Lourentzou et al. \cite{lourentzou2018difficult} aplican aprendizaje asistido al co-entrenamiento de dos modelos neuronales para extraer en paralelo entidades y sus relaciones del texto. Muestran resultados prometedores en un pequeño caso de uso para extraer reacciones adversas a medicamentos a partir de texto no estructurado. 
+
+Existen varios estudios que comparan el desempeño de algunas estrategias de consulta aplicadas como parte del aprendizaje asistido en extracción de relaciones. Entre las más frecuentemente analizadas encontramos el muestreo de incertidumbre \cite{lourentzou2018exploring, lourentzou2018mining, lourentzou2018difficult, roth2008pipeline, sun2012active}, consulta por comité \cite{angeli2014combining}, incertidumbre ponderada por densidad \cite{lourentzou2018mining}, BALD (\textit{Bayesian Active Learning by Disagreement}) \cite{lourentzou2018exploring, lourentzou2018mining}
+y QUIRE \cite{lourentzou2018exploring, lourentzou2018mining}. Algunos trabajos exploran la selección de forma dinámica de la estrategia de consulta, guiados por la intuición de que la estrategia que resulte ventajosa al principio puede no ser la mejor según se avance en el proceso. Lourentzou et al \cite{lourentzou2018mining} proponen un método que distribuye inicialmente las instancias entre todos los criterios considerados y descarta el de peor desempeño en cada iteración.
+%
+%En cuanto a técnicas de machine learning se ha usado SVMs with linear kernel \cite{zhang2012unified}, regularized version of the 
+%Structured Perceptron algorithm  \cite{roth2008pipeline} y maximun entropy \cite{sun2012active, fu2013efficient}.
+%
+%En deep learning se han usado CNN y bi-directional GRUs \cite{lourentzou2018difficult,lourentzou2018exploring,lourentzou2018mining} 
+
+%The effectiveness of instance-ranking
+%criteria used in active learning, such as uncertainty, representativeness or information gain , is highly dependent on the underlying data and the relation to extract and it is very difficult to identify strong connections between any of the criteria and the task \cite{hsu2015active}. \cite{lourentzou2018exploring} 
+
+%Sun et al. \cite{sun2012active} presented an active learning system LGCo-Testing. It is based on an active learning approach Co-testing \cite{muslea2000selective} in the co-training \cite{blum1998combining} setting. For applying Co-testing, the authors proposed to create two views of the relation instances - i) a local view based on the features capturing the entity mentions being connected and other characteristics of the containing sentence; and ii) a global view based on the distributional similarity of the phrases connecting two entity mentions, using a large corpus. Suppose, for an instance of PHYS type, the connecting phrase is travelled to, then examples of other phrases similar to it are arrived in, visited, etc. Distributional similarity would assign a high similarity between two phrases, if these phrases are observed in the similar context in a large corpus.  A Maximum Entropy classifier is trained using the features from the local view. As a classifier using global view, a nearest neighbour classifier is used which uses the distributional similarity to find the nearest neighbours. \cite{pawar2017survey}
+%
+%The LGCo-testing was further improved in
+%terms of efficiency by Fu and Grishman \cite{fu2013efficient}.
+%
+%Fu and Grishman \cite{fu2013efficient} propose to interleave self-training with co-testing to reduce the annotation cost. The co-testing (the sampling method) leverages local and global data views \cite{sun2012active} : a global classifier that relies on similarity of relation phrases and a local classifier that uses a set of lexical and syntactic features \cite{lourentzou2018exploring}
+%
+%Fu and Grishman \cite{fu2013efficient} employ active learning to create a classifier quickly for new relations, simulated from the ACE corpus. \cite{angeli2014combining}
+%
+%Finn and Kushmerick \cite{nicholas2003activelearning} compare a number of selection criteria – including QBC – for a supervised classifier. \cite{angeli2014combining}
+%
+%Recently, a bilingual active learning approach for RE was proposed by Qian et al. \cite{qian2014bilingual} and the two languages were Chinese and English.
+%
+%Sterckx et al. \cite{sterckx2014using}
+%perform noise reduction by using semantic clustering and word
+%embeddings: they perform hierarchical clustering of the candidate
+%training samples to select the most reliable ones. \cite{lourentzou2018exploring}
+
+\subsection{Enfoques para el Desbalance de Clases}
+
+[TODO]
+
+
+
+
+
+
+
+
+
+
+  
